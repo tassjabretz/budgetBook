@@ -1,0 +1,36 @@
+//
+//  Localizable.strings
+//  savingPot
+//
+//  Created by Tassja Bretz on 03.10.25.
+//
+
+"haushalstbuch" = "Budget book";
+"transaktionen" = "Transaktions";
+"transaktionen_hinzufügen" = "Add Transaction";
+"einstellungen" = "Settings";
+"categories_outcome" = "Categories Outcome";
+"categories_income" = "Categories Income";
+"miete" = "Rent";
+"kredit" = "Credit";
+"lebensmittel" = "Supermarket";
+"restaurant" = "Restaurant";
+"drogerie" = "Drugstore";
+"handy" = "Smartphone";
+"internet" = "Wlan";
+"sport" = "Sport";
+"special" = "Special";
+"loading_categories" = "Loading Categories";
+"select_category" = "Select a Category";
+"add_book" = "add Budgtebook";
+"transaction_title_placeholder" = "Transaction Titel";
+"amount" = "Amount";
+"loading_budgteBooks" = "Loadung Budget Books";
+"budgetBook" = "BudgetBook";
+"description" = "Description";
+"add_transaction" = "Add Transaction";
+"please_fill_in_all_fields" = "Please Fill in all Fields";
+"transaction_type" = "Transaction";
+"budget_book_titel" = "Titel BudgetBook";
+"no_transactions" = "No Transactions added";
+
