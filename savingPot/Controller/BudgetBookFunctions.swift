@@ -23,6 +23,22 @@ final class BudgetBookFunctions {
         return []
     }
     
+    func applyBudgetBook (modelContext: ModelContext)  {
+     
+        let budgetBook = BudgetBook(titel: "Standard")
+        
+        modelContext.insert(budgetBook)
+        
+        do {
+            try modelContext.save()
+            print("Context saved successfully")
+        } catch {
+            
+            print("Error saving context: \(error)")
+        }
+        
+        
+    }
     
     
     func addBudgetBook (modelContext: ModelContext, budgetBookTitel: String)  {

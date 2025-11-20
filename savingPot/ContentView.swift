@@ -24,7 +24,7 @@ struct ContentView: View {
             
             NavigationStack {
                 AddTransactionView()
-                    .navigationTitle("transaktionen_hinzufügen") // Corrected to use the add key
+                    .navigationTitle("transaktionen_hinzufügen") 
             }
             
             .tabItem {

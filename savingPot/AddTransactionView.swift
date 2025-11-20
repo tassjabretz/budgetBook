@@ -220,46 +220,36 @@ struct AddTransactionView: View {
                     )
             }
             
-            if budgetBooks.isEmpty {
-                ProgressView("loading_budgteBooks")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .controlSize(.large)
-                    .padding(20)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.white)
-                    )
-            }
         }
     }
     
-    func saveTransaction() {
+    func saveTransaction()  {
         
         // 1. Validate the transaction data
         let isValid = TransactionFunctions().validateTransaction(
             categoryName: selectedCategory,
             transactionTitel: titel,
-            description: text, // Assuming 'text' is used for description as per previous suggestions
+            description: text,
             amount: amount,
-            budgeBookTitel: selectedBudgetBook
+            
         )
         
         if isValid {
-            // 2. Data is valid: Save the transaction
             TransactionFunctions().addTransaction(
                 modelContext: modelContext,
                 categoryName: selectedCategory,
                 transactionTitel: titel,
-                description: text, // Use 'text'
+                description: text,
                 amount: amount,
                 transactionType: selectedType,
                 budgeBookTitel: selectedBudgetBook
             )
-            
+        }
+    
+          
          
             
-        } else {
-            // 4. Data is invalid: Show the error alert
+        else {
             self.isError = true
         }
     }

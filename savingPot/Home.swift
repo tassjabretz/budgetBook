@@ -30,76 +30,76 @@ struct Home: View {
             }
             else
             {
-
-            VStack {
-            
-               
+         
+                                    
                     
-                    
-                    
-                    HStack
-                    {
-                        Text("Transaktionen Haushaltsbuch 1")
-                        Spacer()
-                        Image(systemName: "calendar")
-                    }
-                    
-                    .padding()
-                    
-                    .background(
-                        UnevenRoundedRectangle(
-                            cornerRadii: .init(
-                                topLeading: 10,
-                                topTrailing: 10
-                            ),
-                            style: .continuous
+                    VStack {
+                        
+                        
+                        
+                        
+                        
+                        HStack
+                        {
+                            Text(currentBudgetBook.title)
+                            Spacer()
+                            Image(systemName: "calendar")
+                        }
+                        
+                        .padding()
+                        
+                        .background(
+                            UnevenRoundedRectangle(
+                                cornerRadii: .init(
+                                    topLeading: 10,
+                                    topTrailing: 10
+                                ),
+                                style: .continuous
+                            )
+                            .fill(Color.gray)
                         )
-                        .fill(Color.gray)
+                        
+                        
+                        ForEach(transactions.indices, id: \.self) { index in
+                            let transaction = transactions[index]
+                            TransactionCard(transaction: transaction)
+                            
+                            
+                            if index != transactions.count - 1 {
+                                Divider()
+                                    .frame(height: 1)
+                                    .overlay(.black)
+                                
+                            }
+                        }
+                        Spacer()
+                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                        
+                            .stroke(Color.black, lineWidth: 1)
+                        
+                        
                     )
                     
-                    
-                    ForEach(transactions.indices, id: \.self) { index in
-                        let transaction = transactions[index]
-                        TransactionCard(transaction: transaction)
-                        
-                        
-                        if index != transactions.count - 1 {
-                            Divider()
-                                .frame(height: 1)
-                                .overlay(.black)
-                            
-                        }
-                    }
-                    Spacer()
+                    .padding()
                 }
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                
-                    .stroke(Color.black, lineWidth: 1)
-                
-                
-            )
             
-            .padding()
-            }
-      
-          
-     
-            
-          
-            
-            
-     
-            
-            
-            
-         
             
         }
         .task {
             transactions = TransactionFunctions().fetchTransactions(modelContext: modelContext)
-            budgetBooks = BudgetBookFunctions().fetchBudgetBooks(modelContext: modelContext)
+            
+            if(budgetBooks.isEmpty)
+            {
+                BudgetBookFunctions().applyBudgetBook(modelContext: modelContext)
+                budgetBooks = BudgetBookFunctions().fetchBudgetBooks(modelContext: modelContext)
+            }
+            
         }
+        
+   
+        
    
         .navigationBarTitleDisplayMode(.inline)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

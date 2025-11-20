@@ -13,10 +13,13 @@ final class BudgetBook: Identifiable {
     
 
     var titel: String
-    var transaction: Transaction?
     
-    init(titel: String) {
+    @Relationship(inverse: \Transaction.budgetBook)
+        var transactions: [Transaction]?
+    
+    init(titel: String, transactions: [Transaction]? = nil) {
         self.titel = titel
+        self.transactions = transactions
     }
     
     

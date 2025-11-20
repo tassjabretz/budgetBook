@@ -25,7 +25,7 @@
 "add_book" = "add Budgtebook";
 "transaction_title_placeholder" = "Transaction Titel";
 "amount" = "Amount";
-"loading_budgteBooks" = "Loadung Budget Books";
+"loading_budgteBooks" = "Loading Budget Books";
 "budgetBook" = "BudgetBook";
 "description" = "Description";
 "add_transaction" = "Add Transaction";

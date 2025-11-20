@@ -40,6 +40,7 @@ final class TransactionFunctions {
                 predicate: #Predicate { $0.titel == budgeBookTitel })
             
             let category: Category = try! modelContext.fetch(descriptorCategory).first!
+            
             let budgetBook = try! modelContext.fetch(descriptorbudgetBook).first!
             
             let transaction = Transaction(titel: transactionTitel,
@@ -56,7 +57,7 @@ final class TransactionFunctions {
             category.transactions?.append(transaction)
             
             try modelContext.save()
-            print("Context saved successfully")
+            
         }
         catch {
             
@@ -64,14 +65,13 @@ final class TransactionFunctions {
         }
     }
     
-    func validateTransaction(categoryName: String, transactionTitel: String, description: String, amount: Double,budgeBookTitel: String) -> Bool {
+    func validateTransaction(categoryName: String, transactionTitel: String, description: String, amount: Double) -> Bool {
         
         let areFieldsValid = !categoryName.isEmpty &&
-        !transactionTitel.isEmpty &&
-        !description.isEmpty &&
-        !budgeBookTitel.isEmpty
-        let isAmountValid = amount > 0.0
+                             !transactionTitel.isEmpty &&
+                             !description.isEmpty &&
+                             amount > 0.0
         
-        return areFieldsValid && isAmountValid
+        return areFieldsValid 
     }
 }
