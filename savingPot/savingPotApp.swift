@@ -28,6 +28,7 @@ struct savingPotApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .modifier(PreferredColorSchemeModifier())
         }
         
         

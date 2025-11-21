@@ -26,12 +26,23 @@ struct Categories: View {
     var body: some View {
         
         VStack(alignment: .leading) {
-
-            ForEach(categories) { category in
-                CategoryRow(isOutcome: true, category: category, currencyFormatter: currencyFormatter)
+            
+            if(isOutcome)
+            {
+                ForEach(categories) { category in
+                    CategoryRow(isOutcome: true, category: category, currencyFormatter: currencyFormatter)
+                }
+            }
+            else
+            {
+                ForEach(categories) { category in
+                    CategoryRow(isOutcome: false, category: category, currencyFormatter: currencyFormatter)
+                    
+                }
+                
+                
             }
         }
-        
         .overlay {
             if categories.isEmpty {
                 ProgressView()
@@ -65,6 +76,8 @@ struct Categories: View {
             }
             
         }
+        
+  
         .padding()
         .navigationBarTitleDisplayMode(.inline)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

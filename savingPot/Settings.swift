@@ -9,11 +9,17 @@ import SwiftUI
 
 struct Settings: View {
 
-    
+    @AppStorage("isDarkModeActive") var isDarkModeActive: Bool = false
     var body: some View {
 
-        
+        VStack(alignment:.leading)
+        {
+            Text("categories")
+                .padding(.bottom)
             VStack(alignment: .leading) {
+                
+                
+                
                 
                 NavigationLink(destination: Categories(isOutcome: true)) {
                     
@@ -28,15 +34,15 @@ struct Settings: View {
                     }
                     .foregroundStyle(Color(.black))
                     .padding()
-                  
-                   
+                    
+                    
                 }
                 Divider()
                     .frame(height: 1)
                     .overlay(.black)
                 
-                    
-              
+                
+                
                 NavigationLink(destination: Categories(isOutcome: false)) {
                     
                     
@@ -54,15 +60,66 @@ struct Settings: View {
                 }
                 
             }
-
+            
             .overlay(
-                RoundedRectangle(cornerRadius: 2)
+                RoundedRectangle(cornerRadius: 4)
                 
                     .stroke(Color.black, lineWidth: 1)
                 
                 
             )
+            .padding(.bottom, 40)
             
+            Text("app_settings")
+            
+            VStack(alignment: .leading) {
+                
+                HStack {
+                    Image(systemName: isDarkModeActive ? "moon.fill" : "sun.max.fill")
+                        .foregroundColor(isDarkModeActive ? .yellow : .orange)
+                    
+                    Text("Dunkelmodus aktiv")
+                        .font(.headline)
+                    
+                    Spacer()
+                    
+                    Toggle(isOn: $isDarkModeActive) {
+                        
+                    }
+                    .labelsHidden()
+                }
+                .padding()
+                
+                Divider()
+                    .frame(height: 1)
+                    .overlay(.black)
+                
+                HStack {
+                    
+                    Button("language") {
+                        openAppSettings()
+                    }
+                    Spacer()
+                    
+                    Image(systemName: "arrow.right")
+                    
+                }
+                .foregroundStyle(Color(.black))
+                .font(.headline)
+                .padding()
+                
+                
+                
+                
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                
+                    .stroke(Color.black, lineWidth: 1)
+                
+                
+            )
+        }
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -84,6 +141,15 @@ struct Settings: View {
         
         
     }
+    
+    func openAppSettings() {
+         if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+
+             if UIApplication.shared.canOpenURL(settingsUrl) {
+                 UIApplication.shared.open(settingsUrl, options: [:], completionHandler: nil)
+             }
+         }
+     }
     
 }
 

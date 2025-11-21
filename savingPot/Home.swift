@@ -41,7 +41,7 @@ struct Home: View {
                         
                         HStack
                         {
-                            Text(currentBudgetBook.title)
+                            Text("Haushaltsbuch")
                             Spacer()
                             Image(systemName: "calendar")
                         }

@@ -9,6 +9,7 @@
 "transaktionen" = "Transaktions";
 "transaktionen_hinzufügen" = "Transaktion hinzufügen";
 "einstellungen" = "Einstellungen";
+"categories" = "Kategorien";
 "kategorien" = "Kategorien";
 "miete" = "Miete";
 "kredit" = "Kredit";
@@ -33,3 +34,6 @@
 "budget_book_titel" = "Titel Haushaltsbuch";
 "budget_book_titel" = "Titel Haushaltsbuch";
 "no_transactions" = "Keine Transkationen eingtragen";
+"app_settings" = "App Einstellungen";
+"language" = "Sprache";
+
