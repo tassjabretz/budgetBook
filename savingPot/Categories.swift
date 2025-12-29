@@ -11,17 +11,15 @@ import SwiftData
 struct Categories: View {
     
     let isOutcome: Bool
-    
+ 
+    @State private var isError: Bool = false
+    @State private var showToast: Bool = false
+    @State private var message: String?
     @Environment(\.modelContext) var modelContext
     
     @State private var categories: [Category] = []
+    @Binding var selectedTab: Int
 
-    private let currencyFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = Locale.current
-        return formatter
-    }()
     
     var body: some View {
         
@@ -30,19 +28,42 @@ struct Categories: View {
             if(isOutcome)
             {
                 ForEach(categories) { category in
-                    CategoryRow(isOutcome: true, category: category, currencyFormatter: currencyFormatter)
+                    CategoryRow(
+                        isOutcome: category.isOutgoing,
+                        category: category,
+                        selectedTab: $selectedTab,
+                        onSave: { message in
+                            self.message = message
+                            withAnimation {
+                                self.showToast = true
+                            }
+                        }
+                    )
                 }
             }
             else
             {
                 ForEach(categories) { category in
-                    CategoryRow(isOutcome: false, category: category, currencyFormatter: currencyFormatter)
+                        CategoryRow(
+                            isOutcome: category.isOutgoing,
+                            category: category,
+                            selectedTab: $selectedTab,
+                            onSave: { message in
+                                self.message = message
+                                withAnimation {
+                                    self.showToast = true
+                                }
+                            }
+                        )
+                
                     
                 }
                 
                 
             }
         }
+        .toast(isShowing: $showToast, message: message ?? "")
+        
         .overlay {
             if categories.isEmpty {
                 ProgressView()
@@ -76,8 +97,10 @@ struct Categories: View {
             }
             
         }
+     
+            
         
-  
+       
         .padding()
         .navigationBarTitleDisplayMode(.inline)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -85,8 +108,8 @@ struct Categories: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("kategorien")
-                    .foregroundColor(.black)
-                    .font(.system(size: 25))
+                    .foregroundColor(.adaptiveBlack)
+                    .font(.headline)
                     .fontWeight(.bold)
             }
         }
@@ -106,5 +129,5 @@ struct Categories: View {
 
 
 #Preview {
-    Categories(isOutcome: true)
+    Categories(isOutcome: true, selectedTab: .constant(0))
 }

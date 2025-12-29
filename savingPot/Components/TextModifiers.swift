@@ -8,25 +8,70 @@
 import Foundation
 import SwiftUI
 
-struct TextFieldModifier: ViewModifier {
+struct TextFieldModifierBig: ViewModifier {
  
-
-    @FocusState private var fieldIsFocused: Bool
+    var isError: Bool
+    
     func body(content: Content) -> some View {
         content
             .frame(height: 55)
-            .textFieldStyle(PlainTextFieldStyle())
+            .textFieldStyle(.plain)
             .padding([.horizontal], 4)
             .padding(.vertical, 5)
-            .cornerRadius(8)
+            .background(Color(.white))
+            .cornerRadius(2)
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(fieldIsFocused ? Color.blue : Color.gray, lineWidth: 2))
-            .focused($fieldIsFocused)
+                RoundedRectangle(cornerRadius: 2)
+                    .stroke(isError ? Color.red : Color.clear, lineWidth: isError ? 2 : 0)
+            )
+            .font(.caption)
+    }
+         
+            
             
    
      
     }
     
   
+
+
+struct TextFieldModifier: ViewModifier {
+ 
+
+    var isError: Bool
+    func body(content: Content) -> some View {
+        content
+
+            .textFieldStyle(.plain)
+            .foregroundColor(.black)
+            .frame(height: 30)
+            .cornerRadius(2)
+            .accessibilityAddTraits(.isHeader)
+            .font(.caption)
+            .overlay(
+                
+                RoundedRectangle(cornerRadius: 0)
+                    .stroke(isError ? Color.red : Color.clear, lineWidth: isError ? 2 : 0)
+            )
+            .background(Color.white)
+            .foregroundColor(.black)
+        
+    }
+    
+    
+            
+   
+     
+    
+    
+  
 }
+
+    let currencyFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.locale = Locale.current
+    return formatter
+}()
+

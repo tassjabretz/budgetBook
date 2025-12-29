@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		085A71932EEEDA9400D2B419 /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = 085A71922EEEDA9400D2B419 /* FirebaseAILogic */; };
 		08E873AC2E8FEA43005BB439 /* Localizable.strings in Sources */ = {isa = PBXBuildFile; fileRef = 08E873AB2E8FEA43005BB439 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				085A71932EEEDA9400D2B419 /* FirebaseAILogic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +134,7 @@
 			);
 			name = savingPot;
 			packageProductDependencies = (
+				085A71922EEEDA9400D2B419 /* FirebaseAILogic */,
 			);
 			productName = savingPot;
 			productReference = 08D565E62E8F02C10001EFFB /* savingPot.app */;
@@ -216,6 +219,9 @@
 			);
 			mainGroup = 08D565DD2E8F02C10001EFFB;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				085A71912EEEDA9400D2B419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08D565E72E8F02C10001EFFB /* Products */;
 			projectDirPath = "";
@@ -622,6 +628,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		085A71912EEEDA9400D2B419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		085A71922EEEDA9400D2B419 /* FirebaseAILogic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 085A71912EEEDA9400D2B419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAILogic;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 08D565DE2E8F02C10001EFFB /* Project object */;
 }

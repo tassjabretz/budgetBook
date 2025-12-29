@@ -1,68 +1,62 @@
-
-
 import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    
+    @State private var selectedTab = 0
 
     var body: some View {
+
         
-        TabView {
+        TabView(selection: $selectedTab) {
             
+            // 1. Home Tab (Transaktionen)
             NavigationStack {
-                
-                Home()
+                Home(selectedTab: $selectedTab)
                     .navigationTitle("transaktionen")
+            }
+            .tabItem {
+              
+                Label("transaktionen_tab", systemImage: "house.fill")
+                    .accessibilityLabel("transaktionen_tab")
+            }
+            .tag(0)
                 
+          
+            NavigationStack {
+                AddTransactionView(selectedTab: $selectedTab)
+                    .navigationTitle("add_transaction")
             }
-            
             .tabItem {
-                Label("transaktionen", systemImage: "house")
-                    
+               
+                Label("add_transaction", systemImage: "plus.circle")
+                    .accessibilityLabel("transaktionen")
             }
-           
+            .tag(1)
+            
+          
+         
             
             NavigationStack {
-                AddTransactionView()
-                    .navigationTitle("transaktionen_hinzufügen") 
-            }
-            
-            .tabItem {
-                Label("transaktionen_hinzufügen", systemImage: "plus.circle")
-            }
-            
-            NavigationStack {
-                AddBudgetBookView()
-                    .navigationTitle(Text("add_book_title"))
+                Settings(selectedTab: $selectedTab)
+                    .navigationTitle(Text("settings"))
             }
             .tabItem {
-                Label("add_book", systemImage: "book")
+                Label("settings", systemImage: "gearshape")
+                    .accessibilityLabel("settings")
             }
-            
-            NavigationStack {
-                Settings()
-                    .navigationTitle(Text("einstellungen"))
-            }
-            
-            .tabItem {
-                Label("einstellungen", systemImage: "gearshape")
-            }
-            
-            
-           
+            .tag(3)
         }
+
         
-        
-        
-        .accentColor(.blueback)
+        .accentColor(.adaptiveBlack )
         .navigationBarTitleDisplayMode(.inline)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar {
-  
             ToolbarItem(placement: .principal) {
-                Text("haushalstbuch")
+                Text("budgetBook")
                     .foregroundColor(.black)
-                    .font(.system(size: 25))
+                    .font(.title)
                     .fontWeight(.bold)
             }
         }

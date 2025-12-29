@@ -11,15 +11,13 @@ import SwiftData
 @Model
 final class BudgetBook: Identifiable {
     
-
+    var id = UUID()
     var titel: String
     
-    @Relationship(inverse: \Transaction.budgetBook)
-        var transactions: [Transaction]?
+   
     
-    init(titel: String, transactions: [Transaction]? = nil) {
+    init(titel: String) {
         self.titel = titel
-        self.transactions = transactions
     }
     
     

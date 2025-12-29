@@ -9,14 +9,14 @@ import SwiftUI
 
 
 struct ButtonNormal: ViewModifier {
-    
+
     var buttonTitel: String
     func body(content: Content) -> some View {
         content
 
         .frame(maxWidth: .infinity)
           .padding()
-          .foregroundColor(.black)
+          .foregroundStyle(.adaptiveBlack)
           .background(.blueback)
           .cornerRadius(10)
          
@@ -25,15 +25,18 @@ struct ButtonNormal: ViewModifier {
 }
 
 struct ButtonRed: ViewModifier {
+  
     
-    let buttonTitel: String
+    var buttonTitel: String
     func body(content: Content) -> some View {
         content
-        Text(buttonTitel)
+
+        .frame(maxWidth: .infinity)
           .padding()
-          .foregroundColor(.red)
-          .background(.blueback)
+          .foregroundColor(.black)
+          .background(.red)
           .cornerRadius(10)
+        
             
     }
 }

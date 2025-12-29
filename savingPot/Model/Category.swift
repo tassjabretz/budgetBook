@@ -11,8 +11,7 @@ import SwiftData
 
 @Model
 final class Category: Identifiable {
-    
-
+ 
     var categoryName: String
     var iconName: String
     var budget: Double

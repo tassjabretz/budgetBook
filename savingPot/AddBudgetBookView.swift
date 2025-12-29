@@ -34,10 +34,12 @@ struct AddBudgetBookView: View {
                 TextField("budget_book_titel", text: $titelBook)
                     .textFieldStyle(.roundedBorder)
                     .padding(.bottom)
+                    .font(.caption)
                 
                 Button(action: saveBudgetBook) {
-                    Text("add_budgetBook")
+                    Text("add_book")
                         .modifier(ButtonNormal(buttonTitel: ""))
+                        .font(.title2)
                 }
                
            
@@ -67,15 +69,15 @@ struct AddBudgetBookView: View {
        
             .padding()
             
-            .font(.system(size: 12))
+            .font(.title3)
             .navigationBarTitleDisplayMode(.inline)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Color.lightblue)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("add_budgtebook")
+                    Text("add_book")
                         .foregroundColor(.black)
-                        .font(.system(size: 25))
+                        .font(.title)
                         .fontWeight(.bold)
                 }
             }

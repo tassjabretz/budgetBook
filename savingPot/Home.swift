@@ -11,8 +11,9 @@ struct Home: View {
     @Environment(\.modelContext) var modelContext
     @State var transactions: [Transaction] = []
     @State var budgetBooks: [BudgetBook] = []
-    
-    
+    @Binding var selectedTab: Int
+
+   
     var body: some View {
 
       
@@ -23,28 +24,24 @@ struct Home: View {
             {
        
                   
-                    EmptyView()
+                EmptyView(selectedTab: $selectedTab)
                         .padding()
                     
                 
             }
             else
             {
-         
-                                    
-                    
-                    VStack {
-                        
-                        
-                        
-                        
-                        
-                        HStack
+                VStack (alignment: .center) {
+                  
+                        HStack (alignment: .center)
                         {
-                            Text("Haushaltsbuch")
                             Spacer()
-                            Image(systemName: "calendar")
+                            Text("budgetBook")
+                            Spacer()
                         }
+                        .foregroundStyle(.black)
+                        .fontWeight(.bold)
+    
                         
                         .padding()
                         
@@ -56,33 +53,40 @@ struct Home: View {
                                 ),
                                 style: .continuous
                             )
-                            .fill(Color.gray)
+                            .fill(Color.adaptiveGray)
                         )
                         
                         
                         ForEach(transactions.indices, id: \.self) { index in
                             let transaction = transactions[index]
-                            TransactionCard(transaction: transaction)
-                            
+                        
+                            NavigationLink(destination: Edit(transaction: transaction, selectedTab: $selectedTab))
+                            {
+                                TransactionCard(transaction: transaction)
+                                
+                            }
+              
                             
                             if index != transactions.count - 1 {
                                 Divider()
                                     .frame(height: 1)
-                                    .overlay(.black)
+                                    .overlay(.adaptiveBlack)
                                 
                             }
                         }
-                        Spacer()
+                       
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                         
-                            .stroke(Color.black, lineWidth: 1)
+                            .stroke(Color.adaptiveBlack, lineWidth: 1)
                         
                         
                     )
+               
                     
                     .padding()
+               
                 }
             
             
@@ -90,11 +94,7 @@ struct Home: View {
         .task {
             transactions = TransactionFunctions().fetchTransactions(modelContext: modelContext)
             
-            if(budgetBooks.isEmpty)
-            {
-                BudgetBookFunctions().applyBudgetBook(modelContext: modelContext)
-                budgetBooks = BudgetBookFunctions().fetchBudgetBooks(modelContext: modelContext)
-            }
+           
             
         }
         
@@ -106,9 +106,9 @@ struct Home: View {
         .background(Color.lightblue)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("haushalstbuch")
-                    .foregroundColor(.black)
-                    .font(.system(size: 25))
+                Text("budgetBook")
+                    .foregroundColor(.adaptiveBlack)
+                    .font(.title)
                     .fontWeight(.bold)
             }
         }
@@ -121,5 +121,5 @@ struct Home: View {
     
 
 #Preview {
-    Home()
+    Home(selectedTab: .constant(0))
 }

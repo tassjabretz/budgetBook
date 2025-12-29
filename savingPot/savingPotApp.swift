@@ -8,15 +8,20 @@
 import SwiftUI
 import SwiftData
 
+
 @main
 struct savingPotApp: App {
+    
+    @StateObject private var navigationManager = NavigationManager()
+    @AppStorage("isDarkModeActive") var isDarkModeActive: Bool = false
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Category.self,
             BudgetBook.self,
             Transaction.self
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(schema: schema)
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -28,7 +33,8 @@ struct savingPotApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modifier(PreferredColorSchemeModifier())
+                .environmentObject(navigationManager)
+                .preferredColorScheme(isDarkModeActive ? .dark : .light)
         }
         
         

@@ -10,6 +10,67 @@ import SwiftData
 
 final class TransactionFunctions {
     
+    func deleteTransaction(modelContext: ModelContext, transaction: Transaction, completion: @escaping (Error?) -> Void) {
+        guard transaction.modelContext != nil else {
+            let error = NSError(
+                domain: "TransactionError",
+                code: 404,
+                userInfo: [NSLocalizedDescriptionKey: "Transaktion existiert nicht mehr."]
+            )
+            completion(error)
+            return
+        }
+
+        do {
+            modelContext.delete(transaction)
+            try modelContext.save()
+            completion(nil)
+        } catch {
+            completion(error)
+        }
+    }
+    
+    func editTransaction(
+        modelContext: ModelContext,
+        transaction: Transaction,
+        newCategoryKey: String,
+        newTitel: String,
+        newDescription: String,
+        newAmount: Double,
+        newType: Transaction.TransactionType,
+        completion: @escaping (Error?) -> Void
+    ) {
+        do {
+            let newIsOutgoing = (newType == .outcome)
+            
+         
+            let categoryDescriptor = FetchDescriptor<Category>(
+                predicate: #Predicate { $0.categoryName == newCategoryKey && $0.isOutgoing == newIsOutgoing }
+            )
+            
+            guard let newCategory = try modelContext.fetch(categoryDescriptor).first else {
+                
+                throw NSError(domain: "TransactionEditError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Kategorie mit Schlüssel '\(newCategoryKey)' nicht gefunden."])
+            }
+            
+          
+       
+            
+
+            transaction.titel = newTitel
+            transaction.text = newDescription
+            transaction.amount = newAmount
+            transaction.type = newType
+            transaction.category = newCategory
+            
+            try modelContext.save()
+            completion(nil) 
+            
+        } catch {
+            completion(error)
+        }
+    }
+    
     func fetchTransactions(modelContext: ModelContext) -> [Transaction]  {
         
         
@@ -28,40 +89,44 @@ final class TransactionFunctions {
     }
     
     
-    
-    func addTransaction (modelContext: ModelContext, categoryName: String, transactionTitel: String,  description: String, amount: Double, transactionType: String, budgeBookTitel: String)  {
-        
-        
+    func addTransaction(
+        modelContext: ModelContext,
+        categoryName: String,
+        transactionTitel: String,
+        description: String,
+        amount: Double,
+        transactionType: Transaction.TransactionType,
+        completion: @escaping (Error?) -> Void
+    ) {
         do {
+           
             let descriptorCategory = FetchDescriptor<Category>(
-                predicate: #Predicate { $0.categoryName == categoryName})
+                predicate: #Predicate { $0.categoryName == categoryName }
+            )
+            guard let category = try modelContext.fetch(descriptorCategory).first else {
+                print("Error: Category with name '\(categoryName)' not found.")
+                return
+            }
+            let transaction = Transaction(
+                titel: transactionTitel,
+                text: description,
+                amount: amount,
+                type: transactionType,
+                category: category
+            )
             
-            let descriptorbudgetBook = FetchDescriptor<BudgetBook>(
-                predicate: #Predicate { $0.titel == budgeBookTitel })
-            
-            let category: Category = try! modelContext.fetch(descriptorCategory).first!
-            
-            let budgetBook = try! modelContext.fetch(descriptorbudgetBook).first!
-            
-            let transaction = Transaction(titel: transactionTitel,
-                                          text: description,
-                                          amount: amount,
-                                          transactionType: transactionType,
-                                          category: category,
-                                          budgetBook: budgetBook)
             
             modelContext.insert(transaction)
             
-            transaction.category = category
-            
-            category.transactions?.append(transaction)
-            
             try modelContext.save()
             
-        }
-        catch {
             
-            print("Error saving context: \(error)")
+            completion(nil)
+            
+            
+            
+        } catch {
+            completion(error)
         }
     }
     

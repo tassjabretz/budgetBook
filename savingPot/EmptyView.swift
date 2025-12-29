@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct EmptyView: View {
-    // 1. Initialize scale to a base value
     @State var scale: CGFloat = 1.0
+    
+    @Binding var selectedTab: Int
     
     var body: some View {
         VStack(alignment: .center) {
@@ -21,13 +22,15 @@ struct EmptyView: View {
                     }
                 }
             Spacer()
-            Text("no_transactions" )
+            Text("no_transactions")
                 .padding(.vertical, 30)
+                .font(.title2)
             
-            NavigationLink(destination: AddTransactionView()) {
+            NavigationLink(destination: AddTransactionView(selectedTab: $selectedTab)) {
                 Text("add_transaction")
             }
             .modifier(ButtonNormal(buttonTitel: ""))
+            .font(.title2)
 
 
             Spacer()
@@ -40,5 +43,5 @@ struct EmptyView: View {
 }
 
 #Preview {
-    EmptyView()
+    EmptyView(selectedTab:.constant(0))
 }

@@ -1,29 +1,20 @@
-//
-//  Home.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 02.10.25.
-//
 
 import SwiftUI
 
 struct Settings: View {
 
     @AppStorage("isDarkModeActive") var isDarkModeActive: Bool = false
+    
+    @Binding var selectedTab: Int
     var body: some View {
 
         VStack(alignment:.leading)
         {
             Text("categories")
                 .padding(.bottom)
+                .font(.title3)
             VStack(alignment: .leading) {
-                
-                
-                
-                
-                NavigationLink(destination: Categories(isOutcome: true)) {
-                    
-                    
+                NavigationLink(destination: Categories(isOutcome: true, selectedTab: $selectedTab)) {
                     HStack (alignment: .center)
                     {
                         
@@ -32,18 +23,16 @@ struct Settings: View {
                         Spacer()
                         Image(systemName: "arrow.right")
                     }
-                    .foregroundStyle(Color(.black))
+                    .foregroundColor(.adaptiveBlack)
                     .padding()
-                    
-                    
                 }
                 Divider()
                     .frame(height: 1)
-                    .overlay(.black)
+                    .overlay(.adaptiveBlack)
                 
                 
                 
-                NavigationLink(destination: Categories(isOutcome: false)) {
+                NavigationLink(destination: Categories(isOutcome: false, selectedTab: $selectedTab)) {
                     
                     
                     HStack(alignment: .center)
@@ -55,7 +44,7 @@ struct Settings: View {
                         Image(systemName: "arrow.right")
                     }
                     
-                    .foregroundStyle(Color(.black))
+                    
                     .padding()
                 }
                 
@@ -64,21 +53,21 @@ struct Settings: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
                 
-                    .stroke(Color.black, lineWidth: 1)
+                    .stroke(.adaptiveBlack, lineWidth: 1)
                 
                 
             )
             .padding(.bottom, 40)
             
             Text("app_settings")
+                .font(.title3)
+                .padding(.bottom)
             
             VStack(alignment: .leading) {
                 
                 HStack {
-                    Image(systemName: isDarkModeActive ? "moon.fill" : "sun.max.fill")
-                        .foregroundColor(isDarkModeActive ? .yellow : .orange)
-                    
-                    Text("Dunkelmodus aktiv")
+                   
+                    Text("darkmode")
                         .font(.headline)
                     
                     Spacer()
@@ -92,43 +81,46 @@ struct Settings: View {
                 
                 Divider()
                     .frame(height: 1)
-                    .overlay(.black)
+                    .overlay(.adaptiveBlack)
                 
                 HStack {
                     
-                    Button("language") {
+                    Button {
                         openAppSettings()
+                        
                     }
-                    Spacer()
-                    
-                    Image(systemName: "arrow.right")
+                    label: {
+                        
+                        Text("language")
+                        Spacer()
+                        
+                        Image(systemName: "arrow.right")
+                    }
                     
                 }
-                .foregroundStyle(Color(.black))
+               
                 .font(.headline)
                 .padding()
-                
-                
-                
                 
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
                 
-                    .stroke(Color.black, lineWidth: 1)
+                    .stroke(.adaptiveBlack, lineWidth: 1)
                 
                 
             )
         }
+        .foregroundColor(.adaptiveBlack)
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Color.lightblue)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("einstellungen")
-                        .foregroundColor(.black)
-                        .font(.system(size: 25))
+                    Text("app_settings")
+                        .foregroundColor(.adaptiveBlack)
+                        .font(.headline)
                         .fontWeight(.bold)
                 }
             }
@@ -154,5 +146,5 @@ struct Settings: View {
 }
 
 #Preview {
-    Settings()
+    Settings(selectedTab: .constant(2))
 }

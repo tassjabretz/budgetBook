@@ -18,7 +18,7 @@ func fetchCategoriesOutcome(modelContext: ModelContext) -> [Category]  {
             let descriptor = FetchDescriptor<Category>(
                 predicate: #Predicate { $0.isOutgoing == true },
                 sortBy: [
-                    .init(\.id)
+                    .init(\.categoryName)
                 ]
             )
             return try modelContext.fetch(descriptor)
@@ -37,7 +37,25 @@ func fetchCategoriesOutcome(modelContext: ModelContext) -> [Category]  {
                 let descriptor = FetchDescriptor<Category>(
                     predicate: #Predicate { $0.isOutgoing == false },
                     sortBy: [
-                        .init(\.id)
+                        .init(\.categoryName)
+                    ]
+                )
+                return try modelContext.fetch(descriptor)
+                
+            } catch {
+                print("Fehler beim Abrufen der Kategorien: \(error)")
+            }
+            return []
+        }
+    
+    func fetchCategories(modelContext: ModelContext) -> [Category]  {
+        
+
+            do {
+               
+                let descriptor = FetchDescriptor<Category>(
+                    sortBy: [
+                        .init(\.categoryName)
                     ]
                 )
                 return try modelContext.fetch(descriptor)
@@ -52,16 +70,17 @@ func fetchCategoriesOutcome(modelContext: ModelContext) -> [Category]  {
 
 func applyCategories (modelContext: ModelContext)  {
     let categories = [
-        Category(categoryName: "miete", iconName: "house", budget: 5000, isOutgoing: true),
-        Category(categoryName: "kredit", iconName: "creditcard", budget: 200, isOutgoing: true),
-        Category(categoryName: "lebensmittel", iconName: "carrot", budget: 400, isOutgoing: true),
-        Category(categoryName: "drogerie", iconName: "cart", budget: 30, isOutgoing: true),
-        Category(categoryName: "restaurant", iconName: "fork.knife", budget: 100, isOutgoing: true),
-        Category(categoryName: "handy", iconName: "smartphone", budget: 50, isOutgoing: true),
-        Category(categoryName: "internet", iconName: "wifi", budget: 50, isOutgoing: true),
-        Category(categoryName: "sport", iconName: "figure.badminton", budget: 50, isOutgoing: true),
-        Category(categoryName: "special", iconName: "plus", budget: 40, isOutgoing: true),
-        Category(categoryName: "gehalt", iconName: "banknote", budget: 0, isOutgoing: false),
+        Category(categoryName: "Miete", iconName: "house", budget: 5000, isOutgoing: true),
+        Category(categoryName: "Kredit", iconName: "creditcard", budget: 200, isOutgoing: true),
+        Category(categoryName: "Lebensmittel", iconName: "carrot", budget: 400, isOutgoing: true),
+        Category(categoryName: "Drogerie", iconName: "cart", budget: 30, isOutgoing: true),
+        Category(categoryName: "Restaurant", iconName: "fork.knife", budget: 100, isOutgoing: true),
+        Category(categoryName: "Handy", iconName: "smartphone", budget: 50, isOutgoing: true),
+        Category(categoryName: "Internet", iconName: "wifi", budget: 50, isOutgoing: true),
+        Category(categoryName: "Sport", iconName: "figure.badminton", budget: 50, isOutgoing: true),
+        Category(categoryName: "Special", iconName: "plus", budget: 40, isOutgoing: true),
+        Category(categoryName: "salary", iconName: "banknote", budget: 0, isOutgoing: false),
+        Category(categoryName: "familiy_friends", iconName: "person.crop.circle.badge.plus", budget: 0, isOutgoing: false),
     ]
     
     for category in categories {
@@ -69,12 +88,31 @@ func applyCategories (modelContext: ModelContext)  {
     }
     do {
         try modelContext.save()
-        print("Context saved successfully") // And this line
+        print("Context saved successfully")
     } catch {
         
         print("Error saving context: \(error)")
     }
     
     
+    
+    
 }
+    
+    func editCategoryBudget(
+        modelContext: ModelContext,
+        category: Category,
+        newBudget: Double,
+        completion: @escaping (Error?) -> Void
+    ) {
+        do {
+            category.budget = newBudget
+            
+            try modelContext.save()
+            completion(nil)
+            
+        } catch {
+            completion(error)
+        }
+    }
   }
