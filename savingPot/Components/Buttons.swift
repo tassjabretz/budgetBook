@@ -36,7 +36,8 @@ struct ButtonRed: ViewModifier {
           .padding()
           .foregroundColor(.black)
           .background(.red)
-          .cornerRadius(10)
+          .cornerRadius(20)
+          .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
         
             
     }

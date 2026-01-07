@@ -4,6 +4,8 @@ import SwiftUI
 struct Settings: View {
 
     @AppStorage("isDarkModeActive") var isDarkModeActive: Bool = false
+    @Environment(\.locale) var locale
+    
     
     @Binding var selectedTab: Int
     var body: some View {
@@ -13,6 +15,7 @@ struct Settings: View {
             Text("categories")
                 .padding(.bottom)
                 .font(.title3)
+                .foregroundStyle(Color(.adaptiveBlack))
             VStack(alignment: .leading) {
                 NavigationLink(destination: Categories(isOutcome: true, selectedTab: $selectedTab)) {
                     HStack (alignment: .center)
@@ -22,13 +25,14 @@ struct Settings: View {
                             .font(.headline)
                         Spacer()
                         Image(systemName: "arrow.right")
+                            .foregroundStyle(.secondary)
                     }
-                    .foregroundColor(.black)
+                    
                     .padding()
                 }
                 Divider()
-                    .frame(height: 1)
-                    .overlay(.black)
+                    .frame(height: 0.3)
+                    .overlay(.secondary)
                 
                 
                 
@@ -42,6 +46,7 @@ struct Settings: View {
                             .font(.headline)
                         Spacer()
                         Image(systemName: "arrow.right")
+                            .foregroundStyle(.secondary)
                     }
                     
                     
@@ -49,19 +54,17 @@ struct Settings: View {
                 }
                 
             }
+          
             
-            .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                
-                    .stroke(.black, lineWidth: 1)
-                
-                
-            )
+            .background(.adaptiveWhiteCard)
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
             .padding(.bottom, 40)
             
             Text("app_settings")
                 .font(.title3)
                 .padding(.bottom)
+                .foregroundStyle(Color(.adaptiveBlack))
             
             VStack(alignment: .leading) {
                 
@@ -80,8 +83,8 @@ struct Settings: View {
                 .padding()
                 
                 Divider()
-                    .frame(height: 1)
-                    .overlay(.black)
+                    .frame(height: 0.3)
+                    .overlay(.secondary)
                 
                 HStack {
                     
@@ -92,10 +95,12 @@ struct Settings: View {
                     label: {
                         
                         Text("language")
+                            .foregroundStyle(.adaptiveBlack)
                         Spacer()
-                        
+                        Text(currentLanguageName)
                         Image(systemName: "arrow.right")
                     }
+                    .foregroundStyle(.secondary)
                     
                 }
                
@@ -103,23 +108,19 @@ struct Settings: View {
                 .padding()
                 
             }
-            .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                
-                    .stroke(.black, lineWidth: 1)
-                
-                
-            )
+            .background(.adaptiveWhiteCard)
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
         }
-        .foregroundColor(.black)
+        .foregroundColor(.adaptiveBlack)
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background(Color.lightblue)
+            .background(.adaptiveWhiteBackground)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("app_settings")
-                        .foregroundColor(.black)
+                        .foregroundColor(.adaptiveBlack)
                         .font(.headline)
                         .fontWeight(.bold)
                 }
@@ -130,9 +131,13 @@ struct Settings: View {
             .toolbarBackground(.visible, for: .navigationBar, .tabBar)
         
       
-        
+    
         
     }
+    private var currentLanguageName: String {
+         let languageCode = locale.language.languageCode?.identifier ?? "unknown"
+         return locale.localizedString(forLanguageCode: languageCode) ?? languageCode.uppercased()
+     }
     
     func openAppSettings() {
          if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
@@ -146,5 +151,7 @@ struct Settings: View {
 }
 
 #Preview {
-    Settings(selectedTab: .constant(2))
+    NavigationStack {
+        Settings(selectedTab: .constant(2))
+    }
 }

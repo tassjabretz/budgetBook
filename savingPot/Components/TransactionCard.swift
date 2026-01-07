@@ -27,7 +27,7 @@ struct TransactionCard: View {
             
             Spacer()
             
-            Text(String(transaction.amount))
+            Text( String(transaction.amount) + " €")
                 .font(.system(.body, design: .rounded))
                 .bold()
                 .padding(.horizontal, 12)
@@ -56,10 +56,10 @@ struct TransactionCard: View {
     )
     
     let sampleCategory2 = Category(
-        categoryName: "Freunde",
-        iconName: "house.fill",
+        categoryName: "Gehalt",
+        iconName: "pencil",
         defaultBudget: 100.0,
-        isOutgoing: true,
+        isOutgoing: false,
     )
     
     
@@ -76,8 +76,8 @@ struct TransactionCard: View {
     let sampleTransaction2 = Transaction(
         titel: "Tassja",
         text: "Test",
-        amount: 2.0,
-        type: .outcome,
+        amount: 3000.0,
+        type: .income,
         category: sampleCategory2
     )
     

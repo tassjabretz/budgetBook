@@ -66,7 +66,7 @@ struct Home: View {
             
             ForEach(transactions.indices, id: \.self) { index in
                 let transaction = transactions[index]
-                NavigationLink(destination: Edit(transaction: transaction, selectedTab: $selectedTab)) {
+                NavigationLink(destination: EditTransactionView(transaction: transaction, selectedTab: $selectedTab)) {
                     TransactionCard(transaction: transaction)
                 }
                 

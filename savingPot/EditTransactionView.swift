@@ -1,11 +1,14 @@
 import SwiftUI
 import SwiftData
 
-struct Edit: View {
+
+
+
+struct EditTransactionView: View {
     @Binding var selectedTab: Int
     let transaction: Transaction
     
-
+    // MARK: - State Properties
     @State var titel: String
     @State var descriptionText: String
     @State var selectedCategoryName: String
@@ -13,7 +16,6 @@ struct Edit: View {
     @State var amount: Double
     @State var categories: [Category] = []
     
-
     @State private var showToast = false
     @State private var message: String?
     @State private var messageTitle: String?
@@ -21,6 +23,15 @@ struct Edit: View {
     
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
+    
+    // MARK: - Focus and Edit State
+    // Enum für die individuelle Ansteuerung der Felder
+    enum Field: Hashable {
+        case title, description, amount
+    }
+    
+    @State private var isEditing: Bool = false
+    @FocusState private var focusedField: Field?
 
     init(transaction: Transaction, selectedTab: Binding<Int>) {
         self.transaction = transaction
@@ -41,20 +52,22 @@ struct Edit: View {
             }
             .padding(.top)
         }
-        .background(Color.lightblue)
+        .background(Color.adaptiveWhiteCard)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) { toolbarTitle }
         }
-        .toolbarBackground(
-            Color.adaptiveGray,
-            for: .navigationBar, .tabBar)
+        .toolbarBackground(Color.adaptiveGray, for: .navigationBar, .tabBar)
         .toolbarBackground(.visible, for: .navigationBar, .tabBar)
-
-            
         .task { loadCategories() }
         .onChange(of: selectedTransactionType) { _, newValue in
             handleTypeChange(newValue)
+        }
+      
+        .onChange(of: focusedField) { _, newValue in
+            if newValue == nil {
+                isEditing = false
+            }
         }
         .toast(isShowing: $showToast, message: message ?? "")
         .sheet(isPresented: $showResultView) {
@@ -62,17 +75,17 @@ struct Edit: View {
         }
     }
 
-
     private var toolbarTitle: some View {
         Text("edit_transaction")
-            .foregroundStyle(.black)
-            .font(.headline).fontWeight(.bold)
+            .foregroundStyle(.adaptiveBlack)
+            .font(.headline)
+            .fontWeight(.bold)
     }
 
     private var formFields: some View {
         VStack(spacing: 20) {
-            rowField(label: "transaction_title_placeholder", text: $titel)
-            rowField(label: "description", text: $descriptionText, vertical: true)
+            rowField(label: "transaction_title_placeholder", text: $titel, field: .title)
+            rowField(label: "description", text: $descriptionText, field: .description, vertical: true)
             amountField
         }
     }
@@ -92,10 +105,13 @@ struct Edit: View {
                         Image(systemName: "chevron.up.chevron.down")
                     }
                 }
-                .tint(.black)
+              
+                .tint(.primary)
+            }
+            .onTapGesture {
+                isEditing = false
             }
 
-          
             selectionRow(label: "Category") {
                 Menu {
                     Picker("", selection: $selectedCategoryName) {
@@ -111,14 +127,18 @@ struct Edit: View {
                         Image(systemName: "chevron.up.chevron.down")
                     }
                 }
-                .foregroundStyle(.black)
+               
+                .foregroundStyle(.primary)
+            }
+            .onTapGesture {
+                isEditing = false
             }
         }
     }
 
     private var actionButtons: some View {
         VStack(spacing: 15) {
-            Button("edit_transaction") {  saveChanges() }
+            Button("edit_transaction") { saveChanges() }
                 .modifier(ButtonNormal(buttonTitel: ""))
             
             Button("delete_transaction") { deleteTransaction() }
@@ -127,16 +147,23 @@ struct Edit: View {
         .padding(.horizontal)
     }
 
-
-    private func rowField(label: String, text: Binding<String>, vertical: Bool = false) -> some View {
+    private func rowField(label: String, text: Binding<String>, field: Field, vertical: Bool = false) -> some View {
         VStack(alignment: .leading) {
-            Text(LocalizedStringKey(label)).font(.subheadline).foregroundStyle(.adaptiveGray)
+            Text(LocalizedStringKey(label))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            
             HStack {
                 TextField("", text: text, axis: vertical ? .vertical : .horizontal)
+                    .disabled(!isEditing)
+                    .focused($focusedField, equals: field) // Individueller Fokus
+                    .foregroundStyle(focusedField == field ? .primary : .secondary)
+                
                 Spacer()
-                Image(systemName: "pencil")
+                
+                editToggleButton(for: field)
             }
-            .foregroundStyle(.black)
+            .padding(.vertical, 4)
             Divider().modifier(Line())
         }
         .padding(.horizontal)
@@ -144,32 +171,56 @@ struct Edit: View {
 
     private var amountField: some View {
         VStack(alignment: .leading) {
-            Text("amount").font(.subheadline).foregroundStyle(.adaptiveGray)
+            Text("amount")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            
             HStack {
-                TextField("", value: $amount, formatter: NumberFormatter())
+                TextField("", value: $amount, format: .currency(code: "EUR"))
                     .keyboardType(.decimalPad)
+                    .disabled(!isEditing)
+                    .focused($focusedField, equals: .amount)
+                    .foregroundStyle(isEditing ? .primary : .secondary)
+                
                 Spacer()
-                Image(systemName: "pencil")
+                
+                editToggleButton(for: .amount)
             }
-            .foregroundStyle(.black)
+            .padding(.vertical, 4)
             Divider().modifier(Line())
         }
         .padding(.horizontal)
+    }
+
+    private func editToggleButton(for field: Field) -> some View {
+        Button {
+            withAnimation {
+                isEditing = true
+                focusedField = field
+            }
+        } label: {
+            Image(systemName: (isEditing && focusedField == field) ? "checkmark.circle.fill" : "pencil")
+                .font(.system(size: 22))
+                .foregroundStyle((isEditing && focusedField == field) ? .green : .red)
+        }
     }
 
     private func selectionRow<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading) {
-            Text(LocalizedStringKey(label)).font(.subheadline).foregroundStyle(.secondary)
+            Text(LocalizedStringKey(label))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            
             HStack {
                 content()
                 Spacer()
-                Image(systemName: "pencil")
             }
+            .padding(.vertical, 4)
             Divider().modifier(Line())
         }
         .padding(.horizontal)
+      
     }
-
 
 
     private func handleTypeChange(_ newValue: Transaction.TransactionType) {
@@ -186,14 +237,26 @@ struct Edit: View {
             CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
     }
 
-    func saveChanges()   {
-          TransactionFunctions().editTransaction(modelContext: modelContext, transaction: transaction, newCategoryKey: selectedCategoryName, newTitel: titel, newDescription: descriptionText, newAmount: amount, newType: selectedTransactionType) { error in
+    func saveChanges() {
+        TransactionFunctions().editTransaction(
+            modelContext: modelContext,
+            transaction: transaction,
+            newCategoryKey: selectedCategoryName,
+            newTitel: titel,
+            newDescription: descriptionText,
+            newAmount: amount,
+            newType: selectedTransactionType
+        ) { error in
             handleCompletion(error: error, successKey: "transaction_edit_success")
         }
     }
 
     func deleteTransaction() {
-        TransactionFunctions().deleteTransaction(modelContext: modelContext, transaction: transaction, newCategoryKey: selectedCategoryName) { error in
+        TransactionFunctions().deleteTransaction(
+            modelContext: modelContext,
+            transaction: transaction,
+            newCategoryKey: selectedCategoryName
+        ) { error in
             handleCompletion(error: error, successKey: "transaction_delete_success")
         }
     }
@@ -209,4 +272,10 @@ struct Edit: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { dismiss() }
         }
     }
+}
+
+#Preview {
+    
+    let transaction = Transaction(titel: "Test", text: "Description", amount: 5, type: .income)
+    EditTransactionView(transaction: transaction, selectedTab: .constant(0))
 }
