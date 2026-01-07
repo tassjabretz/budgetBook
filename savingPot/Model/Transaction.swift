@@ -18,7 +18,6 @@ final class Transaction: Identifiable {
         self.category = category
     }
     
-    // TYP: Groß geschrieben (UpperCamelCase)
     enum TransactionType: String, Codable, CaseIterable, Identifiable {
         case income = "Einnahme"
         case outcome = "Ausgabe"

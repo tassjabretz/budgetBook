@@ -16,15 +16,19 @@ struct TextFieldModifierBig: ViewModifier {
         content
             .frame(height: 55)
             .textFieldStyle(.plain)
-            .padding([.horizontal], 4)
+            .padding(.horizontal, 16)
             .padding(.vertical, 5)
-            .background(Color(.white))
             .cornerRadius(2)
             .overlay(
                 RoundedRectangle(cornerRadius: 2)
                     .stroke(isError ? Color.red : Color.clear, lineWidth: isError ? 2 : 0)
             )
             .font(.caption)
+            .foregroundColor(.black)
+            .background(.adaptiveWhiteCard)
+      
+            .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
+          
     }
          
             
@@ -42,10 +46,10 @@ struct TextFieldModifier: ViewModifier {
     var isError: Bool
     func body(content: Content) -> some View {
         content
-
+            .padding(.horizontal, 16)
             .textFieldStyle(.plain)
             .foregroundColor(.black)
-            .frame(height: 30)
+            .frame(height: 50)
             .cornerRadius(2)
             .accessibilityAddTraits(.isHeader)
             .font(.caption)
@@ -54,8 +58,11 @@ struct TextFieldModifier: ViewModifier {
                 RoundedRectangle(cornerRadius: 0)
                     .stroke(isError ? Color.red : Color.clear, lineWidth: isError ? 2 : 0)
             )
-            .background(Color.white)
+            .background(.adaptiveWhiteCard)
+      
+            .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
             .foregroundColor(.black)
+        
         
     }
     

@@ -3,8 +3,8 @@ import SwiftData
 
 
 struct AddTransactionView: View {
-   
-
+    
+    
     @State var titel = ""
     @State var text = ""
     @State var amount: Double = 0.0
@@ -30,7 +30,7 @@ struct AddTransactionView: View {
         VStack(alignment: .leading) {
             
             
-            InputGroupView(titel: $titel, text: $text, amount: $amount, isError: $isError)
+            InputGroupView(titel: $titel, text: $text, amount: $amount, isError: $isError, selectedType: $selectedType)
             
             
             InputGroupSelectionView(
@@ -41,23 +41,25 @@ struct AddTransactionView: View {
             
             Spacer()
             
-            
-            Button(action: saveTransaction) {
-                Text("add_transaction")
-                    .modifier(ButtonNormal(buttonTitel: ""))
-                    .font(.title2)
+            HStack {
+                Spacer()
+                Button(action: saveTransaction) {
+                    Text("add_transaction")
+                        .modifier(ButtonNormal(buttonTitel: ""))
+                }
+                Spacer()
+                    
             }
-            
             
             
             
             .onChange(of: selectedType) { _, newValue in
                 let newCategories: [Category]
                 
-        
+                
                 if newValue == .income {
                     newCategories = CategoryFunctions().fetchCategoriesIncome(modelContext: modelContext)
-                    selectedCategory = "salary" 
+                    selectedCategory = "salary"
                 } else {
                     newCategories = CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
                     selectedCategory = "Miete"
@@ -81,25 +83,23 @@ struct AddTransactionView: View {
             
         }
         .task {
-            
             do {
                 let initialCheckCategory = try modelContext.fetch(FetchDescriptor<Category>())
-                let initialBudgetBook = try modelContext.fetch(FetchDescriptor<BudgetBook>())
-                
                 if initialCheckCategory.isEmpty {
                     CategoryFunctions().applyCategories(modelContext: modelContext)
                 }
                 
-                if initialBudgetBook.isEmpty {
-                    BudgetBookFunctions().applyBudgetBook(modelContext: modelContext)
+                
+                if selectedType == .outcome {
+                    categories = CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
+                    selectedCategory = "Miete"
+                } else {
+                    categories = CategoryFunctions().fetchCategoriesIncome(modelContext: modelContext)
+                    selectedCategory = "salary"
                 }
             } catch {
                 print("Initial data check failed: \(error)")
             }
-            
-            
-            
-            categories = CategoryFunctions().fetchCategories(modelContext: modelContext)
         }
         .toast(isShowing: $showToast, message: message ?? "Unbekannter Status")
         .overlay(loadingIndicators)
@@ -107,31 +107,31 @@ struct AddTransactionView: View {
         .font(.caption)
         .navigationBarTitleDisplayMode(.inline)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.lightblue)
+        .background(Color.adaptiveWhiteBackground)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("add_transaction")
-                    .foregroundColor(.adaptiveBlack)
+                    .foregroundColor(.black)
                     .font(.system(.title))
                     .fontWeight(.bold)
             }
         }
         .toolbarBackground(
-            Color.blueback,
+            Color.adaptiveGray,
             for: .navigationBar, .tabBar)
         .toolbarBackground(.visible, for: .navigationBar, .tabBar)
         .sheet(isPresented: $showResultView) {
             
             ResultView(
-                       message: self.message ?? "Hinweis: Keine Nachricht vorhanden",
-                       text: self.messageTitle ?? "Hinweis", selectedTab: $selectedTab)
+                message: self.message ?? "Hinweis: Keine Nachricht vorhanden",
+                text: self.messageTitle ?? "Hinweis", selectedTab: $selectedTab)
         }
         .onChange(of: showResultView) { oldValue, newValue in
             if newValue == false {
                 dismiss()
             }
         }
-
+        
     }
     
     
@@ -174,7 +174,7 @@ struct AddTransactionView: View {
                 if let error = error {
                     message =  error.localizedDescription + NSLocalizedString("transaction_add_error", comment: "error message")
                     messageTitle = NSLocalizedString("error_title", comment: "error Title")
-                   showToast = false
+                    showToast = false
                     showResultView = true
                     
                 } else {
@@ -183,7 +183,7 @@ struct AddTransactionView: View {
                     withAnimation {
                         showToast = true
                     }
-                  
+                    
                     showResultView = false
                 }
                 
@@ -192,6 +192,8 @@ struct AddTransactionView: View {
         else {
             self.isError = true
         }
+        
+        
         
     }
     
@@ -202,6 +204,7 @@ struct AddTransactionView: View {
         @Binding var text: String
         @Binding var amount: Double
         @Binding var isError: Bool
+        @Binding var selectedType: Transaction.TransactionType
         let placeholderText = NSLocalizedString("description", comment: "test")
         
         
@@ -214,20 +217,20 @@ struct AddTransactionView: View {
                         .foregroundColor(.black)
                 )
                 .modifier(TextFieldModifier(isError: isError))
-                  
-                    
+                
+                
                 if(isError && titel.isEmpty)
                 {
                     Label(NSLocalizedString("empty_title", comment: "no title"), systemImage: "exclamationmark.circle")
                 }
                 
                 TextField(
-                  placeholderText,
+                    placeholderText,
                     text: $text,
                     prompt: Text(placeholderText)
                         .foregroundColor(.black)
                 )
-                    .modifier(TextFieldModifierBig(isError: isError))
+                .modifier(TextFieldModifierBig(isError: isError))
                 if(isError && text.isEmpty)
                 {
                     Label(NSLocalizedString("empty_description", comment: "no description"), systemImage: "exclamationmark.circle")
@@ -241,7 +244,17 @@ struct AddTransactionView: View {
                     Label(NSLocalizedString("empty_amount", comment: "No Amount"), systemImage: "exclamationmark.circle")
                 }
                 
+                HStack {
+                    Text(selectedType.localizedName)
+                    Spacer()
+                }
+                .padding()
+                .background(.adaptiveWhiteCard)
+                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                
+                
             }
+            
             .onChange(of: [titel, text]) {
                 if isError {
                     isError = false
@@ -262,64 +275,100 @@ struct AddTransactionView: View {
     struct InputGroupSelectionView: View {
         
         
-     
+        
         @Binding var selectedType: Transaction.TransactionType
         @Binding var selectedCategory: String
         var categories: [Category]
         
         var body: some View {
-            VStack(spacing: 0) {
+            VStack {
                 
+                HStack  {
+                    ForEach(Transaction.TransactionType.allCases) { type in
+                        Text(type.localizedName).tag(type)
+                            .font(.caption)
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 20)
+                            .background(
+                                selectedType == type
+                                ? Color.secondary.opacity(0.15)
+                                : Color.clear
+                            )
+                            .cornerRadius(10)
+                            .onTapGesture {
+                                selectedType = type
+                            }
+                    }
+                    
+                    .padding(.top, 16)
+                    Spacer()
+                    
+                }
+                .frame(height: 50)
+                
+                Divider()
                 
                 HStack {
-                    Text("transaction_type")
-                        .bold()
+                    Text("select_category")
                         .font(.caption)
+                        .bold()
+                    
+                    Spacer()
+                    
+                    Menu {
+                        Picker("", selection: $selectedCategory) {
+                            ForEach(categories, id: \.categoryName) { cat in
+                                Text(cat.categoryName).tag(cat.categoryName)
+                            }
+                        }
+                    } label: {
                         
-                    Picker("transaction_type", selection: $selectedType) {
-                        ForEach(Transaction.TransactionType.allCases) { type in
-                                Text(type.localizedName).tag(type)
-                                .font(.caption)
-                            }
-                        }
-                    }
-                .font(.caption)
-                    .pickerStyle(.segmented)
-                }
-                .foregroundStyle(.adaptiveBlack)
-                .padding(.top)
-                
-                
-                VStack (alignment: .leading){
-                    HStack {
-                        Text("select_category")
-                            .bold()
-                            .font(.caption)
-                        Spacer()
-                        Picker("select_category", selection: $selectedCategory) {
-                            ForEach(categories, id: \.self) { category in
-                                
-                                let localizedName = NSLocalizedString(category.categoryName, comment: "category")
-                                Text(LocalizedStringKey(localizedName))
-                                
-                                    .tag(category.categoryName)
+                        HStack {
+                            if !selectedCategory.isEmpty {
+                                Text(selectedCategory)
                                     .font(.caption)
-                                   
+                                    .foregroundColor(.adaptiveBlack)
                             }
+                            
+                            Image(systemName: "arrow.down.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(.secondary)
+                                .frame(width: 25)
                         }
                     }
                 }
-                .foregroundStyle(.adaptiveBlack)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+               
+            
                 
                 
+            }
+            .frame(height: 100)
+            .background(.adaptiveWhiteCard)
             
-            .scrollContentBackground(.hidden)
-            .tint(Color(.adaptiveBlack))
-            
+            .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
         }
     }
 }
+
     
 #Preview {
-    AddTransactionView(selectedTab:.constant(0))
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Transaction.self, Category.self, configurations: config)
+    
+
+    let categories = [
+        Category(categoryName: "Essen", iconName: "cart", defaultBudget: 300.0, isOutgoing: true),
+        Category(categoryName: "Freizeit", iconName: "star", defaultBudget: 100.0, isOutgoing: true),
+        Category(categoryName: "Gehalt", iconName: "eurosign", defaultBudget: 2500.0, isOutgoing: false)
+    ]
+    
+    categories.forEach { container.mainContext.insert($0) }
+    
+    return NavigationStack {
+        AddTransactionView(selectedTab: .constant(0))
+            .modelContainer(container)
+    }
 }

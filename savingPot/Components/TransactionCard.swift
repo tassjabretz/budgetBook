@@ -9,79 +9,37 @@ import SwiftUI
 
 struct TransactionCard: View {
     
- let transaction: Transaction
-   
+    let transaction: Transaction
+    
     var body: some View {
         
-
+        HStack(spacing: 15) {
+            Image(systemName: transaction.category?.iconName ?? "questionmark")
+                .font(.title2)
+                .foregroundColor(.secondary)
+                .frame(width: 40)
             
-            VStack (alignment: .leading)
-            {
-                HStack (alignment:.center)
-                {
-                    
-                    Image(systemName: transaction.category!.iconName)
-                        .renderingMode(.template)
-                            .resizable()
-                            .modifier(roundImage())
-                           
-                            
-                    
-                   
-           Spacer()
-                   
-                    VStack(alignment: .leading)
-                    {
-                     
-                        Text(transaction.titel)
-                            .fontWeight(.bold)
-                        Text(transaction.text)
-                        let rawName = transaction.category?.categoryName ?? "Unknown"
-                        let categoryName = NSLocalizedString(rawName, comment: "The display name for the transaction category")
-                        Text(categoryName)
-                        
-                            
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.adaptiveBlack)
-                    .frame(width: 120, alignment: .leading)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    
-                    Spacer()
-                    if(transaction.type == .income)
-                    {
-                        Capsule()
-                            .fill(Color(.green))
-                            .frame(width: 100, height: 30)
-                            .overlay(
-                                Text("+" + String(transaction.amount) + "€")
-                                    .foregroundStyle(Color.white)
-                                    .font(.caption)
-                            )
-                    }
-                    else if (transaction.type == .outcome)
-                    {
-                        Capsule()
-                            .fill(Color(.darkred))
-                            .frame(width: 100, height: 30)
-                            .overlay(
-                                Text("-" + String(transaction.amount) + "€")
-                                    .foregroundStyle(Color.white)
-                                    .font(.caption2)
-                            )
-                    }
-                }
-                .foregroundStyle(.adaptiveBlack)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(transaction.titel).font(.headline).foregroundStyle(Color.gray)
+                Text(transaction.text).font(.subheadline).foregroundColor(.secondary)
+                Text(transaction.category?.categoryName ?? "Unbekannt").font(.caption2).foregroundColor(.secondary)
             }
             
-            .padding()
-            .font(.caption)
-            .frame(height: 60)
-           
+            Spacer()
             
-   
-        
+            Text(String(transaction.amount))
+                .font(.system(.body, design: .rounded))
+                .bold()
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(transaction.type  == .income ? Color.green : Color.red)
+                .foregroundColor(.adaptiveWhiteBackground)
+                .cornerRadius(8)
+        }
+        .padding()
+        .background(.adaptiveWhiteCard)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
     }
 }
 
@@ -93,14 +51,14 @@ struct TransactionCard: View {
     let sampleCategory = Category(
         categoryName: "Familie und Freunde",
         iconName: "house.fill",
-        budget: 100.0,
+        defaultBudget: 100.0,
         isOutgoing: true,
     )
     
     let sampleCategory2 = Category(
         categoryName: "Freunde",
         iconName: "house.fill",
-        budget: 100.0,
+        defaultBudget: 100.0,
         isOutgoing: true,
     )
     

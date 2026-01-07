@@ -14,7 +14,7 @@ struct roundImage: ViewModifier {
        content
             .scaledToFit()
             .frame(width: 25, height: 25)
-            .foregroundStyle(.adaptiveBlack)
+            .foregroundStyle(.black)
     }
 }
 

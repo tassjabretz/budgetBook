@@ -23,12 +23,12 @@ struct Settings: View {
                         Spacer()
                         Image(systemName: "arrow.right")
                     }
-                    .foregroundColor(.adaptiveBlack)
+                    .foregroundColor(.black)
                     .padding()
                 }
                 Divider()
                     .frame(height: 1)
-                    .overlay(.adaptiveBlack)
+                    .overlay(.black)
                 
                 
                 
@@ -53,7 +53,7 @@ struct Settings: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
                 
-                    .stroke(.adaptiveBlack, lineWidth: 1)
+                    .stroke(.black, lineWidth: 1)
                 
                 
             )
@@ -81,7 +81,7 @@ struct Settings: View {
                 
                 Divider()
                     .frame(height: 1)
-                    .overlay(.adaptiveBlack)
+                    .overlay(.black)
                 
                 HStack {
                     
@@ -106,12 +106,12 @@ struct Settings: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
                 
-                    .stroke(.adaptiveBlack, lineWidth: 1)
+                    .stroke(.black, lineWidth: 1)
                 
                 
             )
         }
-        .foregroundColor(.adaptiveBlack)
+        .foregroundColor(.black)
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -119,13 +119,13 @@ struct Settings: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("app_settings")
-                        .foregroundColor(.adaptiveBlack)
+                        .foregroundColor(.black)
                         .font(.headline)
                         .fontWeight(.bold)
                 }
             }
             .toolbarBackground(
-                Color.blueback,
+                Color.adaptiveGray,
                 for: .navigationBar, .tabBar)
             .toolbarBackground(.visible, for: .navigationBar, .tabBar)
         

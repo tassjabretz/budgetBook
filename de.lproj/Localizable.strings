@@ -1,9 +1,4 @@
-//
-//  Localizable.strings
-//  savingPot
-//
-//  Created by Tassja Bretz on 03.10.25.
-//
+
 
 "transaktionen" = "Transaktionen hinzufügen";
 "transaktionen_tab" = "Start";
@@ -37,7 +32,7 @@
 "no_transactions" = "Keine Transaktionen eingetragen";
 "app_settings" = "App Einstellungen";
 "language" = "Sprache";
-"categories_outcome" = "Kategorien Ausnahmen";
+"categories_outcome" = "Kategorien Ausgaben";
 "categories_income" = "Kategorien Einnahmen";
 "salary" = "Gehalt";
 "familiy_friends" = "Familie und Freunde";
@@ -68,3 +63,4 @@
 "Einnahme" = "Einnahme";
 "Ausgabe" = "Ausgabe";
 "transaction_type" = "Transaktionstyp";
+"loading_transactions" = "Transaktionen werden geladen";

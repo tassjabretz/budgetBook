@@ -49,7 +49,7 @@ struct ContentView: View {
         }
 
         
-        .accentColor(.adaptiveBlack )
+        .accentColor(.black )
         .navigationBarTitleDisplayMode(.inline)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar {
@@ -61,7 +61,7 @@ struct ContentView: View {
             }
         }
         .toolbarBackground(
-            Color.blueback,
+            Color.adaptiveGray,
             for: .navigationBar, .tabBar
         )
         .toolbarBackground(.visible, for: .navigationBar, .tabBar)

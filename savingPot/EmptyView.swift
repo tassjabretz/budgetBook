@@ -12,7 +12,7 @@ struct EmptyView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 80)
-                .foregroundColor(.blueback)
+                .foregroundColor(.black)
                 .scaleEffect(scale)
                 .padding()
                 .onAppear {
@@ -24,6 +24,7 @@ struct EmptyView: View {
             Spacer()
             Text("no_transactions")
                 .padding(.vertical, 30)
+                .foregroundColor(.black)
                 .font(.title2)
             
             NavigationLink(destination: AddTransactionView(selectedTab: $selectedTab)) {

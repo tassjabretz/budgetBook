@@ -1,10 +1,3 @@
-//
-//  Home.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 02.10.25.
-//
-
 import SwiftUI
 
 struct Home: View {
@@ -12,114 +5,81 @@ struct Home: View {
     @State var transactions: [Transaction] = []
     @State var budgetBooks: [BudgetBook] = []
     @Binding var selectedTab: Int
-
-   
+    @State private var isLoading = true
+    
     var body: some View {
-
-      
-     
-        ScrollView {
-            
-            if(transactions.isEmpty)
-            {
-       
-                  
-                EmptyView(selectedTab: $selectedTab)
-                        .padding()
-                    
+        NavigationStack {
+         
+            ZStack {
+                Color.adaptiveWhiteBackground.ignoresSafeArea()
                 
-            }
-            else
-            {
-                VStack (alignment: .center) {
-                  
-                        HStack (alignment: .center)
-                        {
-                            Spacer()
-                            Text("budgetBook")
-                            Spacer()
-                        }
-                        .foregroundStyle(.black)
-                        .fontWeight(.bold)
-    
-                        
-                        .padding()
-                        
-                        .background(
-                            UnevenRoundedRectangle(
-                                cornerRadii: .init(
-                                    topLeading: 10,
-                                    topTrailing: 10
-                                ),
-                                style: .continuous
-                            )
-                            .fill(Color.adaptiveGray)
-                        )
-                        
-                        
-                        ForEach(transactions.indices, id: \.self) { index in
-                            let transaction = transactions[index]
-                        
-                            NavigationLink(destination: Edit(transaction: transaction, selectedTab: $selectedTab))
-                            {
-                                TransactionCard(transaction: transaction)
-                                
-                            }
-              
-                            
-                            if index != transactions.count - 1 {
-                                Divider()
-                                    .frame(height: 1)
-                                    .overlay(.adaptiveBlack)
-                                
-                            }
-                        }
-                       
+                if isLoading {
+         
+                    VStack {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.adaptiveWhiteBackground)
+                        Text("loading_transactions")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.top, 8)
                     }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                        
-                            .stroke(Color.adaptiveBlack, lineWidth: 1)
-                        
-                        
-                    )
-               
-                    
-                    .padding()
-               
+                } else if transactions.isEmpty {
+             
+                    EmptyView(selectedTab: $selectedTab)
+                        .padding()
+                } else {
+             
+                    ScrollView {
+                        transactionListContent
+                    }
                 }
-            
-            
+            }
+
+            .task {
+                let fetchedTransactions = TransactionFunctions().fetchTransactions(modelContext: modelContext)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                
+                withAnimation(.easeInOut) {
+                    self.transactions = fetchedTransactions
+                    self.isLoading = false
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("budgetBook")
+                        .foregroundColor(.adaptiveBlack)
+                        .font(.title)
+                        .fontWeight(.bold)
+                }
+            }
+            .toolbarBackground(Color.adaptiveGray, for: .navigationBar, .tabBar)
+            .toolbarBackground(.visible, for: .navigationBar, .tabBar)
         }
-        .task {
-            transactions = TransactionFunctions().fetchTransactions(modelContext: modelContext)
+    }
+    
+ 
+    private var transactionListContent: some View {
+        VStack(alignment: .center) {
             
-           
             
-        }
-        
-   
-        
-   
-        .navigationBarTitleDisplayMode(.inline)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.lightblue)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("budgetBook")
-                    .foregroundColor(.adaptiveBlack)
-                    .font(.title)
-                    .fontWeight(.bold)
+            ForEach(transactions.indices, id: \.self) { index in
+                let transaction = transactions[index]
+                NavigationLink(destination: Edit(transaction: transaction, selectedTab: $selectedTab)) {
+                    TransactionCard(transaction: transaction)
+                }
+                
+             
             }
         }
-        .toolbarBackground(
-            Color.blueback,
-            for: .navigationBar, .tabBar)
-        .toolbarBackground(.visible, for: .navigationBar, .tabBar)
-    }
-}
     
+        .padding()
+    }
+    
+
+}
 
 #Preview {
-    Home(selectedTab: .constant(0))
+    Home(selectedTab:.constant(0))
 }

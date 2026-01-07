@@ -1,35 +1,21 @@
-//
-//  Category.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 14.10.25.
-//
-
-import Foundation
 import SwiftData
-
 
 @Model
 final class Category: Identifiable {
- 
     var categoryName: String
     var iconName: String
-    var budget: Double
+    var defaultBudget: Double
+    var currentBudget: Double
     var isOutgoing: Bool
     
     @Relationship(inverse: \Transaction.category)
-        var transactions: [Transaction]?
+    var transactions: [Transaction] = []
     
-    init( categoryName: String, iconName: String, budget: Double, isOutgoing: Bool, transactions: [Transaction]? = nil) {
+    init(categoryName: String, iconName: String, defaultBudget: Double, isOutgoing: Bool) {
         self.categoryName = categoryName
         self.iconName = iconName
-        self.budget = budget
+        self.defaultBudget = defaultBudget
+        self.currentBudget = defaultBudget
         self.isOutgoing = isOutgoing
-        self.transactions = transactions
     }
-    
-    
-   
-    
-    
 }

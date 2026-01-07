@@ -1,6 +1,10 @@
 import SwiftUI
+import SwiftData
 
 struct CategoryRow: View {
+    
+    @FocusState private var isFocused: Bool
+    
     let isOutcome: Bool
     @Bindable var category: Category
     @Environment(\.modelContext) var modelContext
@@ -18,7 +22,7 @@ struct CategoryRow: View {
         self.isOutcome = isOutcome
         self.category = category
         self._selectedTab = selectedTab
-        self._newBudget = State(initialValue: category.budget)
+        self._newBudget = State(initialValue: category.currentBudget)
         self.onSave = onSave
     }
     
@@ -31,10 +35,10 @@ struct CategoryRow: View {
                 
                 Spacer()
                 
-                Text(category.categoryName)
+                Text(NSLocalizedString(category.categoryName, comment: "category name"))
                     .font(.headline)
                     .frame(width: 120, alignment: .leading)
-                    .foregroundColor(.adaptiveBlack)
+                    .foregroundColor(.black)
                 
                 Spacer()
                 if isOutcome {
@@ -43,22 +47,26 @@ struct CategoryRow: View {
                             .keyboardType(.decimalPad)
                             .frame(maxWidth: 90)
                             .multilineTextAlignment(.trailing)
+                            .focused($isFocused)
                         
                         
-                        if newBudget != category.budget {
-                            Button {
-                                saveBudget()
-                               
-                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                            } label: {
-                                Text("save")
-                                    .font(.caption)
-                                    .foregroundColor(.adaptiveBlack)
-                                    
-                            }
-                            .transition(.scale.combined(with: .opacity))
+                    if isFocused && newBudget != category.currentBudget {
+                        Button {
+                            saveBudget()
+                            isFocused = false
+                        } label: {
+                            Text("save")
                         }
+                        .transition(.scale.combined(with: .opacity))
                     }
+                    }
+                else
+                {
+                    Text(String(category.currentBudget) + " €")
+                        .font(.headline)
+                        .frame(width: 120, alignment: .leading)
+                        .foregroundColor(.black)
+                }
                 }
                 .animation(.spring(), value: newBudget)
             
@@ -79,17 +87,39 @@ struct CategoryRow: View {
             } else {
                
                 onSave(NSLocalizedString("budget_updated_success", comment: "budget_updated_success"))
-                category.budget = newBudget
+                category.currentBudget = newBudget
             }
         }
     }
 }
 
 #Preview {
+    @Previewable @State var showToast = false
+    @Previewable @State var message = ""
+    
     let sampleCategory = Category(
         categoryName: "Essen",
         iconName: "cart.fill",
-        budget: 100.0,
+        defaultBudget: 100.0,
         isOutgoing: true
     )
+    
+    VStack {
+        if showToast {
+            Text(message) // Simulierter Toast
+                .background(Color.black.opacity(0.7))
+                .cornerRadius(8)
+        }
+        
+        CategoryRow(
+            isOutcome: sampleCategory.isOutgoing,
+            category: sampleCategory,
+            selectedTab: .constant(0),
+            onSave: { newMessage in
+                message = newMessage
+                withAnimation { showToast = true }
+            }
+        )
+    }
+    .modelContainer(for: Category.self, inMemory: true)
 }

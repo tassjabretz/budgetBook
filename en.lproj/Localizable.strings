@@ -67,3 +67,5 @@
 "Einnahme" = "Income";
 "Ausgabe" = "Expense"; 
 "transaction_type" = "Transaction Type";
+"loading_transactions" = "Loading transactions";
+

@@ -5,7 +5,7 @@ struct Edit: View {
     @Binding var selectedTab: Int
     let transaction: Transaction
     
-    // State-Variablen
+
     @State var titel: String
     @State var descriptionText: String
     @State var selectedCategoryName: String
@@ -13,7 +13,7 @@ struct Edit: View {
     @State var amount: Double
     @State var categories: [Category] = []
     
-    // UI-Zustände
+
     @State private var showToast = false
     @State private var message: String?
     @State private var messageTitle: String?
@@ -35,7 +35,6 @@ struct Edit: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 25) {
-                // Aufteilung in 3 klare Blöcke
                 formFields
                 pickerFields
                 actionButtons
@@ -47,6 +46,12 @@ struct Edit: View {
         .toolbar {
             ToolbarItem(placement: .principal) { toolbarTitle }
         }
+        .toolbarBackground(
+            Color.adaptiveGray,
+            for: .navigationBar, .tabBar)
+        .toolbarBackground(.visible, for: .navigationBar, .tabBar)
+
+            
         .task { loadCategories() }
         .onChange(of: selectedTransactionType) { _, newValue in
             handleTypeChange(newValue)
@@ -57,11 +62,10 @@ struct Edit: View {
         }
     }
 
-    // --- SUBVIEWS ---
 
     private var toolbarTitle: some View {
         Text("edit_transaction")
-            .foregroundStyle(.adaptiveBlack)
+            .foregroundStyle(.black)
             .font(.headline).fontWeight(.bold)
     }
 
@@ -75,7 +79,6 @@ struct Edit: View {
 
     private var pickerFields: some View {
         VStack(spacing: 20) {
-            // Type Selection
             selectionRow(label: "transaction_type") {
                 Menu {
                     Picker("", selection: $selectedTransactionType) {
@@ -89,31 +92,33 @@ struct Edit: View {
                         Image(systemName: "chevron.up.chevron.down")
                     }
                 }
-                .tint(.lightbluedarkmodeText)
+                .tint(.black)
             }
 
-            // Category Selection
+          
             selectionRow(label: "Category") {
                 Menu {
                     Picker("", selection: $selectedCategoryName) {
                         ForEach(categories) { category in
-                            Text(category.categoryName).tag(category.categoryName)
+                            let localizedName = NSLocalizedString(category.categoryName, comment: "category")
+                            Text(LocalizedStringKey(localizedName))
+                                .tag(category.categoryName)
                         }
                     }
                 } label: {
                     HStack {
-                        Text(selectedCategoryName.isEmpty ? "No Category" : selectedCategoryName)
+                        Text(selectedCategoryName.isEmpty ? "No Category" : NSLocalizedString(selectedCategoryName, comment: "selected category"))
                         Image(systemName: "chevron.up.chevron.down")
                     }
                 }
-                .foregroundStyle(.adaptiveBlack)
+                .foregroundStyle(.black)
             }
         }
     }
 
     private var actionButtons: some View {
         VStack(spacing: 15) {
-            Button("edit_transaction") { saveChanges() }
+            Button("edit_transaction") {  saveChanges() }
                 .modifier(ButtonNormal(buttonTitel: ""))
             
             Button("delete_transaction") { deleteTransaction() }
@@ -122,7 +127,6 @@ struct Edit: View {
         .padding(.horizontal)
     }
 
-    // --- REUSABLE COMPONENTS ---
 
     private func rowField(label: String, text: Binding<String>, vertical: Bool = false) -> some View {
         VStack(alignment: .leading) {
@@ -132,7 +136,7 @@ struct Edit: View {
                 Spacer()
                 Image(systemName: "pencil")
             }
-            .foregroundStyle(.adaptiveBlack)
+            .foregroundStyle(.black)
             Divider().modifier(Line())
         }
         .padding(.horizontal)
@@ -147,7 +151,7 @@ struct Edit: View {
                 Spacer()
                 Image(systemName: "pencil")
             }
-            .foregroundStyle(.adaptiveBlack)
+            .foregroundStyle(.black)
             Divider().modifier(Line())
         }
         .padding(.horizontal)
@@ -166,7 +170,7 @@ struct Edit: View {
         .padding(.horizontal)
     }
 
-    // --- LOGIC ---
+
 
     private func handleTypeChange(_ newValue: Transaction.TransactionType) {
         let newCats = (newValue == .income) ?
@@ -182,14 +186,14 @@ struct Edit: View {
             CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
     }
 
-    func saveChanges() {
-        TransactionFunctions().editTransaction(modelContext: modelContext, transaction: transaction, newCategoryKey: selectedCategoryName, newTitel: titel, newDescription: descriptionText, newAmount: amount, newType: selectedTransactionType) { error in
+    func saveChanges()   {
+          TransactionFunctions().editTransaction(modelContext: modelContext, transaction: transaction, newCategoryKey: selectedCategoryName, newTitel: titel, newDescription: descriptionText, newAmount: amount, newType: selectedTransactionType) { error in
             handleCompletion(error: error, successKey: "transaction_edit_success")
         }
     }
 
     func deleteTransaction() {
-        TransactionFunctions().deleteTransaction(modelContext: modelContext, transaction: transaction) { error in
+        TransactionFunctions().deleteTransaction(modelContext: modelContext, transaction: transaction, newCategoryKey: selectedCategoryName) { error in
             handleCompletion(error: error, successKey: "transaction_delete_success")
         }
     }

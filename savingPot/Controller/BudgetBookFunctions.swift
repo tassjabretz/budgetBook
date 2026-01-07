@@ -41,41 +41,6 @@ final class BudgetBookFunctions {
     }
     
     
-    func addBudgetBook (modelContext: ModelContext, budgetBookTitel: String)  {
-        
-        let budgetBook = BudgetBook(titel: budgetBookTitel)
-        
-        modelContext.insert(budgetBook)
-        
-        do {
-            try modelContext.save()
-            print("Context saved successfully")
-        } catch {
-            
-            print("Error saving context: \(error)")
-        }
-        
-        
-        
-    }
-    
-    func validateBudgetBook (budgetBooks:[BudgetBook], newBudgetBookTitel: String) -> Bool {
-       
-        if newBudgetBookTitel == "Standard" || newBudgetBookTitel.isEmpty {
-            return false
-        }
-        
-       
-        for budgetBook in budgetBooks {
-            if budgetBook.titel == newBudgetBookTitel {
-                return false
-            }
-        }
-        
-        return true
-    }
-        
-        
-
+   
     
 }
