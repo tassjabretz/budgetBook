@@ -26,10 +26,10 @@ struct ToastModifier: ViewModifier {
                                 Spacer()
                                 Text(message)
                                     .font(.subheadline)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.adaptiveWhiteCard)
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 12)
-                                    .background(RoundedRectangle(cornerRadius: 8).fill(Color.black.opacity(0.8)))
+                                    .background(RoundedRectangle(cornerRadius: 8).fill(Color.adaptiveBlack.opacity(0.8)))
                                     .shadow(radius: 10)
                             }
                             .padding(.bottom, 50)

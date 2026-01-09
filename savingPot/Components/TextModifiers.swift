@@ -24,10 +24,11 @@ struct TextFieldModifierBig: ViewModifier {
                     .stroke(isError ? Color.red : Color.clear, lineWidth: isError ? 2 : 0)
             )
             .font(.caption)
-            .foregroundColor(.black)
+            .foregroundColor(.adaptiveBlack)
             .background(.adaptiveWhiteCard)
       
             .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
+            .tint(.adaptiveBlack)
           
     }
          
@@ -48,7 +49,7 @@ struct TextFieldModifier: ViewModifier {
         content
             .padding(.horizontal, 16)
             .textFieldStyle(.plain)
-            .foregroundColor(.black)
+            .foregroundColor(.adaptiveBlack)
             .frame(height: 50)
             .cornerRadius(2)
             .accessibilityAddTraits(.isHeader)
@@ -61,9 +62,9 @@ struct TextFieldModifier: ViewModifier {
             .background(.adaptiveWhiteCard)
       
             .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
-            .foregroundColor(.black)
+       
         
-        
+            .tint(.adaptiveBlack)
     }
     
     

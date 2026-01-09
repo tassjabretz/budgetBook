@@ -22,21 +22,25 @@ struct Categories: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
-            
-            let uiTrigger = categories.reduce(0) { $0 + $1.currentBudget }
-            ForEach(categories) { category in
-                CategoryRow(
-                    isOutcome: category.isOutgoing,
-                    category: category,
-                    selectedTab: $selectedTab,
-                    onSave: { message in
-                        self.message = message
-                        withAnimation {
-                            self.showToast = true
+        
+        let navTitel = isOutcome ? "categories_outcome" : "categories_income"
+        ScrollView {
+            VStack(alignment: .leading) {
+                
+                let uiTrigger = categories.reduce(0) { $0 + $1.currentBudget }
+                ForEach(categories) { category in
+                    CategoryRow(
+                        isOutcome: category.isOutgoing,
+                        category: category,
+                        selectedTab: $selectedTab,
+                        onSave: { message in
+                            self.message = message
+                            withAnimation {
+                                self.showToast = true
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
         .id(categories.reduce(0) { $0 + ($1.currentBudget ?? 0) })
@@ -64,11 +68,11 @@ struct Categories: View {
         .padding()
         .navigationBarTitleDisplayMode(.inline)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.lightblue)
+        .background(Color.adaptiveWhiteBackground)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("kategorien")
-                    .foregroundColor(.black)
+                Text(NSLocalizedString(navTitel, comment: "navTitel"))
+                    .foregroundColor(.adaptiveBlack)
                     .font(.headline)
                     .fontWeight(.bold)
             }
@@ -76,4 +80,12 @@ struct Categories: View {
         .toolbarBackground(Color.adaptiveGray, for: .navigationBar, .tabBar)
         .toolbarBackground(.visible, for: .navigationBar, .tabBar)
     }
+}
+
+#Preview {
+    
+    NavigationStack {
+        Categories(isOutcome: true, selectedTab: .constant(0))
+    }
+
 }

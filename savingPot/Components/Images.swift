@@ -7,15 +7,34 @@
 
 import SwiftUI
 
-struct roundImage: ViewModifier {
+struct roundImage: View {
+    
+    
+    let imageName: String
     
   
-    func body(content: Content) -> some View {
-       content
+    var body: some View {
+
+ 
+     
+        Circle()
+            .fill(Color.adaptiveGray)
+            .frame(width: 40, height: 40)
             .scaledToFit()
-            .frame(width: 25, height: 25)
-            .foregroundStyle(.black)
+            .foregroundStyle(.adaptiveBlack)
+            .overlay(
+                Image(systemName: imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(.adaptiveBlack)
+            )
+
     }
+}
+
+#Preview {
+    roundImage(imageName: "house")
 }
 
 

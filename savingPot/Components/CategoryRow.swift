@@ -27,18 +27,16 @@ struct CategoryRow: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading) {
             HStack {
-                Image(systemName: category.iconName)
-                    .resizable()
-                    .modifier(roundImage())
+                roundImage(imageName: category.iconName)
                 
                 Spacer()
                 
                 Text(NSLocalizedString(category.categoryName, comment: "category name"))
                     .font(.headline)
                     .frame(width: 120, alignment: .leading)
-                    .foregroundColor(.black)
+                    .foregroundColor(.adaptiveBlack)
                 
                 Spacer()
                 if isOutcome {
@@ -65,16 +63,16 @@ struct CategoryRow: View {
                     Text(String(category.currentBudget) + " €")
                         .font(.headline)
                         .frame(width: 120, alignment: .leading)
-                        .foregroundColor(.black)
+                        .foregroundColor(.adaptiveBlack)
                 }
                 }
                 .animation(.spring(), value: newBudget)
             
             }
-            
-            Divider()
-                .modifier(Line())
-                .padding(.bottom, 4)
+        .padding()
+        .background(.adaptiveWhiteCard)
+        .cornerRadius(20)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
         }
       
       
@@ -104,12 +102,15 @@ struct CategoryRow: View {
         isOutgoing: true
     )
     
-    VStack {
-        if showToast {
-            Text(message) // Simulierter Toast
-                .background(Color.black.opacity(0.7))
-                .cornerRadius(8)
-        }
+    let sampleCategory2 = Category(
+        categoryName: "Freizeit",
+        iconName: "house.fill",
+        defaultBudget: 50.0,
+        isOutgoing: true
+    )
+    
+
+  
         
         CategoryRow(
             isOutcome: sampleCategory.isOutgoing,
@@ -120,6 +121,16 @@ struct CategoryRow: View {
                 withAnimation { showToast = true }
             }
         )
-    }
-    .modelContainer(for: Category.self, inMemory: true)
+    
+    CategoryRow(
+        isOutcome: sampleCategory2.isOutgoing,
+        category: sampleCategory2,
+        selectedTab: .constant(0),
+        onSave: { newMessage in
+            message = newMessage
+            withAnimation { showToast = true }
+        }
+    )
+
+    
 }

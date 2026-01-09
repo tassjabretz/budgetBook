@@ -14,10 +14,9 @@ struct TransactionCard: View {
     var body: some View {
         
         HStack(spacing: 15) {
-            Image(systemName: transaction.category?.iconName ?? "questionmark")
-                .font(.title2)
-                .foregroundColor(.secondary)
-                .frame(width: 40)
+            
+            roundImage(imageName: transaction.category?.iconName ?? "questionmark")
+      
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.titel).font(.headline).foregroundStyle(Color.gray)

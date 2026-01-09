@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		085A71932EEEDA9400D2B419 /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = 085A71922EEEDA9400D2B419 /* FirebaseAILogic */; };
 		08E873AC2E8FEA43005BB439 /* Localizable.strings in Sources */ = {isa = PBXBuildFile; fileRef = 08E873AB2E8FEA43005BB439 /* Localizable.strings */; };
+		7F2289792F0FF79D009FC27F /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F22895B2F0FF79D009FC27F /* ResultView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +35,7 @@
 		08D565FF2E8F02C30001EFFB /* savingPotUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = savingPotUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		08E873AA2E8FEA43005BB439 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		08E873AD2E8FEA69005BB439 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		7F22895B2F0FF79D009FC27F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -101,6 +103,7 @@
 				08D565F82E8F02C30001EFFB /* savingPotTests */,
 				08D566022E8F02C30001EFFB /* savingPotUITests */,
 				08D565E72E8F02C10001EFFB /* Products */,
+				7F22895B2F0FF79D009FC27F /* ResultView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -264,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08E873AC2E8FEA43005BB439 /* Localizable.strings in Sources */,
+				7F2289792F0FF79D009FC27F /* ResultView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

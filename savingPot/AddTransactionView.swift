@@ -111,7 +111,7 @@ struct AddTransactionView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("add_transaction")
-                    .foregroundColor(.black)
+                    .foregroundColor(.adaptiveBlack)
                     .font(.system(.title))
                     .fontWeight(.bold)
             }
@@ -214,8 +214,7 @@ struct AddTransactionView: View {
                     "transaction_title_placeholder",
                     text: $titel,
                     prompt: Text("transaction_title_placeholder")
-                        .foregroundColor(.black)
-                )
+                        .foregroundStyle(.adaptiveBlack))
                 .modifier(TextFieldModifier(isError: isError))
                 
                 
@@ -228,7 +227,7 @@ struct AddTransactionView: View {
                     placeholderText,
                     text: $text,
                     prompt: Text(placeholderText)
-                        .foregroundColor(.black)
+                        .foregroundStyle(.adaptiveBlack)
                 )
                 .modifier(TextFieldModifierBig(isError: isError))
                 if(isError && text.isEmpty)
