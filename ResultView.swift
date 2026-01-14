@@ -31,9 +31,11 @@ struct ResultView: View {
                 
                 Text(text)
                     .font(.callout)
+                    .foregroundStyle(.adaptiveBlack)
                 
                 Text(message)
                     .font(.caption)
+                    .foregroundStyle(.adaptiveBlack)
                 
                 Spacer()
                 Button {
@@ -41,12 +43,13 @@ struct ResultView: View {
                 } label: {
                     Text("to_overview")
                         .modifier(ButtonNormal(buttonTitel: "to_overview"))
+                        .foregroundStyle(.adaptiveWhiteCard)
                 }
             }
             .padding()
        
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background(Color.lightblue)
+            .background(Color.adaptiveGray)
         }
       
   
