@@ -57,7 +57,7 @@ struct Settings: View {
                     HStack(alignment: .center) {
                         
                         
-                        Text("Erscheinungsbild")
+                        Text("value")
                             .font(.headline)
                             .foregroundStyle(Color.adaptiveBlack)
                         
