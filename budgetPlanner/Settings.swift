@@ -76,8 +76,6 @@ struct Settings: View {
                         .tint(.secondary)
                     }
                     
-                    
-                    
                     .padding()
                     
                     Divider()
@@ -134,6 +132,9 @@ struct Settings: View {
                         }
                         .padding()
                     }
+                    Divider()
+                        .frame(height: 0.0)
+                        .overlay(.secondary)
                     
                     
                 }
@@ -148,7 +149,7 @@ struct Settings: View {
                     .padding(.bottom)
                     .foregroundStyle(Color.adaptiveBlack)
                 VStack(alignment: .leading) {
-                    NavigationLink(destination: Categories(isOutcome: true, selectedTab: $selectedTab)) {
+                    NavigationLink(destination: FullAppTourView()) {
                         HStack(alignment: .center) {
                             Text("App-Tour")
                                 .font(.headline)
@@ -168,7 +169,7 @@ struct Settings: View {
             
             
             
-            .padding()
+          
       
             
             

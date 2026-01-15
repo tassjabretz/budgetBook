@@ -87,7 +87,7 @@ final class CategoryFunctions {
             Category(categoryName: "pets", iconName: "dog", defaultBudget: 50, isOutgoing: true),
             Category(categoryName: "repair", iconName: "wrench.adjustable", defaultBudget: 100, isOutgoing: true),
             Category(categoryName: "home", iconName: "sofa", defaultBudget: 80, isOutgoing: true),
-            Category(categoryName: "house", iconName: "house", defaultBudget: 1000, isOutgoing: true),
+            Category(categoryName: "rent", iconName: "house", defaultBudget: 1000, isOutgoing: true),
             Category(categoryName: "familiy_friends", iconName: "person.2",  defaultBudget: 50, isOutgoing: true),
             Category(categoryName: "special", iconName: "plus",  defaultBudget: 30.00, isOutgoing: true),
   

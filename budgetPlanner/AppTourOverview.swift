@@ -32,9 +32,10 @@ struct AppTour: View {
         .padding()
         .foregroundStyle(.adaptiveBlack)
        
-        .background(Color(.adaptiveWhiteBackground))
+        
         
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(.adaptiveWhiteBackground))
     }
 }
 

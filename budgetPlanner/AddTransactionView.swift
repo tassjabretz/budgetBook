@@ -26,31 +26,36 @@ struct AddTransactionView: View {
     
     
     var body: some View {
-        
-        VStack(alignment: .leading) {
-            
-            
-            InputGroupView(titel: $titel, text: $text, amount: $amount, isError: $isError, selectedType: $selectedType)
-            
-            
-            InputGroupSelectionView(
-                selectedType: $selectedType,
-                selectedCategory: $selectedCategory,
-                categories: categories,
-            )
-            
-            Spacer()
-            
-            HStack {
-                Spacer()
-                Button(action: saveTransaction) {
-                    Text("add_transaction")
-                        .modifier(ButtonNormal(buttonTitel: ""))
-                }
-                Spacer()
+        VStack(spacing: 0) {
+            ScrollView {
+                
+                VStack(alignment: .leading) {
                     
+                    Color.adaptiveWhiteBackground.ignoresSafeArea()
+                    
+                    InputGroupView(titel: $titel, text: $text, amount: $amount, isError: $isError, selectedType: $selectedType)
+                    
+                    
+                    InputGroupSelectionView(
+                        selectedType: $selectedType,
+                        selectedCategory: $selectedCategory,
+                        categories: categories,
+                    )
+                    
+                }
             }
-            
+                Spacer()
+                
+                HStack {
+                    Spacer()
+                    Button(action: saveTransaction) {
+                        Text("add_transaction")
+                            .modifier(ButtonNormal(buttonTitel: ""))
+                    }
+                    Spacer()
+                    
+                }
+                
             
             
             .onChange(of: selectedType) { _, newValue in
@@ -59,10 +64,10 @@ struct AddTransactionView: View {
                 
                 if newValue == .income {
                     newCategories = CategoryFunctions().fetchCategoriesIncome(modelContext: modelContext)
-                    selectedCategory = "salary" // Key statt Übersetzung
+                    selectedCategory = "salary"
                 } else {
                     newCategories = CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
-                    selectedCategory = "rent" // Key statt Übersetzung
+                    selectedCategory = "rent"
                 }
                 categories = newCategories
             }
@@ -81,7 +86,7 @@ struct AddTransactionView: View {
                 }
             }
             
-        }
+        
         .task {
             do {
                 let initialCheckCategory = try modelContext.fetch(FetchDescriptor<Category>())
@@ -92,7 +97,7 @@ struct AddTransactionView: View {
                 
                 if selectedType == .outcome {
                     categories = CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
-                    selectedCategory = "rent"
+                   selectedCategory = "rent"
                 } else {
                     categories = CategoryFunctions().fetchCategoriesIncome(modelContext: modelContext)
                     selectedCategory = "salary"
@@ -100,6 +105,7 @@ struct AddTransactionView: View {
             } catch {
                 print("Initial data check failed: \(error)")
             }
+        }
         }
         .toast(isShowing: $showToast, message: message ?? "Unbekannter Status")
         .overlay(loadingIndicators)
@@ -112,7 +118,7 @@ struct AddTransactionView: View {
             ToolbarItem(placement: .principal) {
                 Text("add_transaction")
                     .foregroundColor(.adaptiveBlack)
-                    .font(.system(.title))
+                    .font(.system(.headline))
                     .fontWeight(.bold)
             }
         }
@@ -216,6 +222,7 @@ struct AddTransactionView: View {
                     prompt: Text("transaction_title_placeholder")
                         .foregroundStyle(.adaptiveBlack))
                 .modifier(TextFieldModifier(isError: isError))
+              
                 
                 
                 if(isError && titel.isEmpty)
@@ -247,9 +254,7 @@ struct AddTransactionView: View {
                     Text(selectedType.localizedName)
                     Spacer()
                 }
-                .padding()
-                .background(.adaptiveWhiteCard)
-                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                .modifier(TextFieldModifier(isError: false))
                 
                 
             }
@@ -343,8 +348,9 @@ struct AddTransactionView: View {
             }
             .padding(.horizontal)
             .frame(height: 100)
-            .background(.adaptiveWhiteCard)
-            .shadow(color: Color.black.opacity(0.09), radius: 5, x: 0, y: 2)
+            .modifier(TextFieldModifierBig(isError: false))
+            
+           
         }
     }
 }

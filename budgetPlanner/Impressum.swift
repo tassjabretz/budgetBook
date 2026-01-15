@@ -26,6 +26,7 @@ struct ImpressumView: View {
                                 }            }
             .navigationTitle("Impressum")
             .navigationBarTitleDisplayMode(.inline)
+            
         }
     }
 }

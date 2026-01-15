@@ -93,7 +93,7 @@
 "pets" = "Pets";
 "repair" = "Repair";
 "home" = "Living";
-"house" = "Rent";
+"rent" = "Rent";
 "investment" = "Investment";
 "party" = "Leisure time";
 "clothing" = "Clothing";
@@ -103,3 +103,4 @@
 "system" ="System";
 "light" ="Light";
 "dark" ="Dark";
+"save_transaction" = "Save transaction";

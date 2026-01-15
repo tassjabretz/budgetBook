@@ -24,7 +24,7 @@ struct EmptyView: View {
             Spacer()
             Text("no_transactions")
                 .padding(.vertical, 30)
-                .foregroundColor(.black)
+                .foregroundStyle(.adaptiveBlack)
                 .font(.title2)
             
             NavigationLink(destination: AddTransactionView(selectedTab: $selectedTab)) {

@@ -10,60 +10,61 @@ struct OnboardingView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        VStack {
-            
-            HStack {
-                Spacer()
-                Button {
-                  
-                    hasCompletedOnboarding = true
-                    dismiss()
-                } label: {
-                    roundImage(imageName: "xmark")
-                }
-                .padding()
-            }
-            .padding(.trailing)
-            
-    
-
-            ImageAppTour(imageName: imageName)
-              
-            
-            Text(text)
-                .font(.headline)
-                .fixedSize(horizontal: false, vertical: true)
-                .multilineTextAlignment(.center)
-                .padding(20)
-               
-            
-            Spacer()
-            
-           
-            if selectedTab == 4 {
-           
-
-                Button {
-                    hasCompletedOnboarding = true
-                }
+        ScrollView {
+            VStack {
                 
-                label: {
-                   
-                    Text("Loslegen")
-                        .modifier(ButtonNormal(buttonTitel: "Loslegen"))
+                HStack {
+                    Spacer()
+                    Button {
+                        
+                        hasCompletedOnboarding = true
+                        dismiss()
+                    } label: {
+                        roundImage(imageName: "xmark")
+                    }
+                    .padding()
                 }
-                .padding(40)
+                .padding(.trailing)
+                
+                
+                
+                ImageAppTour(imageName: imageName)
+                
+                
+                Text(text)
+                    .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.center)
+                    .padding(20)
                 
                 
                 Spacer()
+                
+                
+                if selectedTab == 4 && hasCompletedOnboarding == false{
                     
-             
+              
+                        Button {
+                        hasCompletedOnboarding = true
+                    }
+                    
+                    label: {
+                        
+                        Text("Loslegen")
+                            .modifier(ButtonNormal(buttonTitel: "Loslegen"))
+                    }
+                    .padding(40)
+                    
+                    
+                    Spacer()
+                }
+                    
             }
+            .padding()
+            .foregroundStyle(.adaptiveBlack)
+            .background(Color(.adaptiveWhiteBackground))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .padding()
-        .foregroundStyle(.adaptiveBlack)
-        .background(Color(.adaptiveWhiteBackground))
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 

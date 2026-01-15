@@ -52,7 +52,7 @@ struct EditTransactionView: View {
             }
             .padding(.top)
         }
-        .background(Color.adaptiveWhiteCard)
+        .background(Color.adaptiveWhiteBackground)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) { toolbarTitle }
@@ -138,7 +138,7 @@ struct EditTransactionView: View {
 
     private var actionButtons: some View {
         VStack(spacing: 15) {
-            Button("edit_transaction") { saveChanges() }
+            Button("save_transaction") { saveChanges() }
                 .modifier(ButtonNormal(buttonTitel: ""))
             
             Button("delete_transaction") { deleteTransaction() }
@@ -156,7 +156,7 @@ struct EditTransactionView: View {
             HStack {
                 TextField("", text: text, axis: vertical ? .vertical : .horizontal)
                     .disabled(!isEditing)
-                    .focused($focusedField, equals: field) // Individueller Fokus
+                    .focused($focusedField, equals: field)
                     .foregroundStyle(focusedField == field ? .primary : .secondary)
                 
                 Spacer()
@@ -277,5 +277,7 @@ struct EditTransactionView: View {
 #Preview {
     
     let transaction = Transaction(titel: "Test", text: "Description", amount: 5, type: .income)
-    EditTransactionView(transaction: transaction, selectedTab: .constant(0))
+    NavigationStack {
+        EditTransactionView(transaction: transaction, selectedTab: .constant(0))
+    }
 }

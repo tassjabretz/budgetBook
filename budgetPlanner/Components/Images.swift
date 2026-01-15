@@ -1,9 +1,3 @@
-//
-//  SwiftUIView.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 03.10.25.
-//
 
 import SwiftUI
 
@@ -34,11 +28,14 @@ struct roundImage: View {
 }
 
 struct ImageAppTour: View {
+    
+    @Environment(\.colorScheme) var colorScheme
+    
     let imageName: String
     
     var body: some View {
         Circle()
-            .fill(Color.adaptiveGray.opacity(0.2))
+            .fill(Color.adaptiveGrayAppTour.opacity(colorScheme == .light ? 0.09 :1))
             .padding(40)
             .frame(width: 420, height: 420)
             .overlay(

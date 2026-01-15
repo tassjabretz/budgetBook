@@ -48,9 +48,9 @@ struct Home: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("budgetBook")
+                    Text("Finanzomat")
                         .foregroundColor(.adaptiveBlack)
-                        .font(.title)
+                        .font(.headline)
                         .fontWeight(.bold)
                 }
             }
