@@ -51,6 +51,7 @@ struct savingPotApp: App {
                 } else {
                    
                     ContentView()
+                        .id(appearanceSelection)
                    
                 }
             }

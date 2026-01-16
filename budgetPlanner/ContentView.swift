@@ -9,7 +9,7 @@ struct ContentView: View {
     
     @Environment(\.modelContext) var modelContext
    
-   
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         
@@ -74,7 +74,7 @@ struct ContentView: View {
 
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("budgetBook")
+                Text("Finanzomat")
                     .foregroundColor(.adaptiveBlack)
                     .font(.headline)
                     .fontWeight(.bold)

@@ -164,14 +164,6 @@ struct Settings: View {
                 }
                 .modifier(containerBorder())
             }
-           
-            
-            
-            
-            
-          
-      
-            
             
         }
         
