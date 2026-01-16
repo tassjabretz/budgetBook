@@ -11,7 +11,11 @@ struct TransactionCard: View {
     
     let transaction: Transaction
     
+    
+    
     var body: some View {
+        
+        let categoryKey = transaction.category?.categoryName ?? "unknown_category"
         
         HStack(spacing: 15) {
             
@@ -21,12 +25,13 @@ struct TransactionCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.titel).font(.headline).foregroundStyle(Color.gray)
                 Text(transaction.text).font(.subheadline).foregroundColor(.secondary)
-                Text(transaction.category?.categoryName ?? "Unbekannt").font(.caption2).foregroundColor(.secondary)
+                Text(NSLocalizedString(categoryKey, comment: "Category display name"))
+                    .font(.caption2).foregroundColor(.secondary)
             }
             
             Spacer()
             
-            Text( String(transaction.amount) + " €")
+            Text(transaction.amount, format: .currency(code: "EUR"))
                 .font(.system(.body, design: .rounded))
                 .bold()
                 .padding(.horizontal, 12)

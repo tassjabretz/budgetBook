@@ -24,8 +24,7 @@ struct EditTransactionView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
     
-    // MARK: - Focus and Edit State
-    // Enum für die individuelle Ansteuerung der Felder
+
     enum Field: Hashable {
         case title, description, amount
     }
@@ -112,7 +111,7 @@ struct EditTransactionView: View {
                 isEditing = false
             }
 
-            selectionRow(label: "Category") {
+            selectionRow(label: "category") {
                 Menu {
                     Picker("", selection: $selectedCategoryName) {
                         ForEach(categories) { category in
