@@ -1,21 +1,44 @@
-on: [push, pull_request]
+name: iOS CI/CD
+
+on: [push]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      
-      # This automatically finds and sets the latest stable Xcode available
+
       - name: Set Latest Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 'latest-stable'
 
+      # 1. Run Unit Tests
       - name: Run Xcode Tests
         run: |
           set -o pipefail && xcodebuild test \
             -scheme savingPot \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -resultBundlePath TestResults \
+            | xcbeautify
+
+      # 2. Create directory for the API Key
+      - name: Prepare API Key
+        run: mkdir -p private_keys
+
+      # 3. Write the secret .p8 content to a file
+      - name: Create API Key File
+        run: echo "${{ secrets.APP_STORE_P8_TEXT }}" > private_keys/AuthKey_${{ secrets.APP_STORE_KEY_ID }}.p8
+
+      # 4. Archive the App (Using Generic iOS Destination)
+      - name: Archive App
+        run: |
+          xcodebuild archive \
+            -scheme budgetPlanner \
+            -archivePath build/budgetPlanner.xcarchive \
+            -destination 'generic/platform=iOS' \
+            -authenticationKeyID ${{ secrets.APP_STORE_KEY_ID }} \
+            -authenticationKeyIssuerID ${{ secrets.APP_STORE_ISSUER_ID }} \
+            -authenticationKeyPath $(pwd)/private_keys/AuthKey_${{ secrets.APP_STORE_KEY_ID }}.p8 \
+            -allowProvisioningUpdates \
             | xcbeautify
