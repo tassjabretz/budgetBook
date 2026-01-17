@@ -16,11 +16,16 @@ jobs:
       # 1. Run Unit Tests
       - name: Run Xcode Tests
         run: |
+          # Sucht den Namen des ersten verfügbaren iOS Simulators
+          DESTINATION=$(xcrun simctl list devices available | grep -m 1 "iPhone" | sed -E 's/.*(\(.*\)).*/\1/' | sed 's/[(|)]//g')
+          echo "Using destination: $DESTINATION"
+          
           set -o pipefail && xcodebuild test \
             -scheme savingPot \
-           -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -destination "platform=iOS Simulator,name=$DESTINATION" \
             -resultBundlePath TestResults \
             | xcbeautify
+     
 
       # 2. Create directory for the API Key
       - name: Prepare API Key
