@@ -18,7 +18,7 @@ jobs:
         run: |
           set -o pipefail && xcodebuild test \
             -scheme savingPot \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+           -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -resultBundlePath TestResults \
             | xcbeautify
 
