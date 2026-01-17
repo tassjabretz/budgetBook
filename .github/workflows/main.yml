@@ -12,11 +12,14 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 'latest-stable'
-          
-      - name: Install iOS Simulator Runtime
-       run: sudo xcodebuild -downloadPlatform iOS
 
-      # 1. Run Unit Tests
+  #  Lädt die iOS Plattform-Komponenten herunter (notwendig in 2026)
+      - name: Install iOS Simulator Runtime
+        run: sudo xcodebuild -downloadPlatform iOS
+      
+          
+      
+      # 2 Run Unit Tests
       - name: Run Xcode Tests
         run: |
           # Sucht den Namen des ersten verfügbaren iOS Simulators
@@ -30,15 +33,15 @@ jobs:
             | xcbeautify
      
 
-      # 2. Create directory for the API Key
+      # 3. Create directory for the API Key
       - name: Prepare API Key
         run: mkdir -p private_keys
 
-      # 3. Write the secret .p8 content to a file
+      # 4. Write the secret .p8 content to a file
       - name: Create API Key File
         run: echo "${{ secrets.APP_STORE_P8_TEXT }}" > private_keys/AuthKey_${{ secrets.APP_STORE_KEY_ID }}.p8
 
-      # 4. Archive the App (Using Generic iOS Destination)
+      # 5. Archive the App (Using Generic iOS Destination)
       - name: Archive App
         run: |
           xcodebuild archive \
