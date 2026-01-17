@@ -31,6 +31,7 @@ struct Categories: View {
     var body: some View {
         
         let navTitel = isOutcome ? "categories_outcome" : "categories_income"
+     
         ScrollView {
             VStack(alignment: .leading) {
                 
@@ -42,59 +43,8 @@ struct Categories: View {
                     )
                 }
                 Spacer()
-                if(navTitel == "categories_outcome")
-                {
-                    HStack() {
-                        Spacer()
-                        Image(systemName: "info.circle")
-                          
-                        Text("information_linktext")
-                        Spacer()
-                    }
-                    .padding()
-                    .onTapGesture {
-                        showSheet = true
-                    }
-                    .sheet(isPresented: $showSheet) {
-                        VStack(alignment: .center) {
-                     
-
-                     
-                                
-                                VStack(alignment: .center) {
-                                   Spacer()
-                                    Image(systemName: "info.circle.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .foregroundColor(.secondary)
-                                        .padding()
-                                    
-                                    Text(LocalizedStringKey("info_categories"))
-                                        .font(.body)
-                                        .multilineTextAlignment(.center)
-                                        .padding(.horizontal)
-                                    Spacer()
-
-                                  
-
-                                    
-                                }
-                                .padding()
-                            
-                        }
-                        .presentationDetents([.medium])
-                        .presentationDragIndicator(.visible)
-                    }
-                   
-                }
-                
             }
-           
-            
         }
-       
-       
         .toast(isShowing: $showToast, message: message ?? "")
         .overlay {
             if categories.isEmpty {
@@ -123,21 +73,79 @@ struct Categories: View {
                     .font(.headline)
                     .fontWeight(.bold)
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Text(NSLocalizedString("save", comment: "save"))
-                    .foregroundColor(.adaptiveBlack)
-                    .font(.caption)
+            if(navTitel == "categories_outcome") {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Text(NSLocalizedString("save", comment: "save"))
+                        .foregroundColor(.adaptiveBlack)
+                        .font(.caption)
                     
-                    .onTapGesture {
-                        saveBudget()
-                    }
-                    .padding(.horizontal)
+                        .onTapGesture {
+                            saveBudget()
+                        }
+                        .padding(.horizontal)
+                }
             }
             
         }
         .toolbarBackground(Color.adaptiveGray, for: .navigationBar, .tabBar)
         .toolbarBackground(.visible, for: .navigationBar, .tabBar)
+        
+        if(navTitel == "categories_outcome")
+        {
+            HStack() {
+                Spacer()
+                Image(systemName: "info.circle")
+                  
+                Text("information_linktext")
+                Spacer()
+            }
+            .padding()
+            .onTapGesture {
+                showSheet = true
+            }
+            .sheet(isPresented: $showSheet) {
+                VStack(alignment: .center) {
+             
+
+             
+                        
+                        VStack(alignment: .center) {
+                           Spacer()
+                            Image(systemName: "info.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.secondary)
+                                .padding()
+                            
+                            Text(LocalizedStringKey("info_categories"))
+                                .font(.body)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                            Spacer()
+
+                          
+
+                            
+                        }
+                        .padding()
+                    
+                }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            }
+           
+        }
     }
+               
+                
+            
+           
+            
+        
+       
+       
+        
     
     func saveBudget() {
         CategoryFunctions().saveAllCategories(modelContext: modelContext) { error in

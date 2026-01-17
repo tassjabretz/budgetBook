@@ -18,7 +18,7 @@ final class CategoryFunctions {
             let descriptor = FetchDescriptor<Category>(
                 predicate: #Predicate { $0.isOutgoing == true },
                 sortBy: [
-                    .init(\.categoryName)
+                    .init(\.categoryName, order: .forward)
                 ]
             )
             return try modelContext.fetch(descriptor)
@@ -37,7 +37,7 @@ final class CategoryFunctions {
             let descriptor = FetchDescriptor<Category>(
                 predicate: #Predicate { $0.isOutgoing == false },
                 sortBy: [
-                    .init(\.categoryName)
+                    .init(\.categoryName, order: .forward)
                 ]
             )
             return try modelContext.fetch(descriptor)
@@ -55,7 +55,7 @@ final class CategoryFunctions {
             
             let descriptor = FetchDescriptor<Category>(
                 sortBy: [
-                    .init(\.categoryName)
+                    .init(\.categoryName, order: .forward)
                 ]
             )
             return try modelContext.fetch(descriptor)

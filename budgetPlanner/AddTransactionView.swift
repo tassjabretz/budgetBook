@@ -188,9 +188,25 @@ struct AddTransactionView: View {
                     message =  NSLocalizedString("transaction_add_success", comment: "success message")
                     withAnimation {
                         showToast = true
+                       
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                        withAnimation {
+                            
+                            selectedTab = 0
+                            
+                            
+                            showToast = false
+                        }
                     }
                     
                     showResultView = false
+                    
+                   
+                    titel = ""
+                    text = ""
+                    amount = 0
+                   
                 }
                 
             }
