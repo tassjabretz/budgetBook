@@ -12,6 +12,9 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 'latest-stable'
+          
+      - name: Install iOS Simulator Runtime
+       run: sudo xcodebuild -downloadPlatform iOS
 
       # 1. Run Unit Tests
       - name: Run Xcode Tests
