@@ -1,13 +1,19 @@
-name: learn-github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
-on: [push]
+name: iOS Unit Tests
+
+on: [push, pull_request]
+
 jobs:
-  check-bats-version:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: macos-14 # or latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm install -g bats
-      - run: bats -v
+      - uses: actions/checkout@v4
+      
+      - name: Set Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_26_2.app
+
+      - name: Run Xcode Tests
+        run: |
+          xcodebuild test \
+            -scheme budgetPlannerTests \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=26' \
+            -resultBundlePath TestResults
