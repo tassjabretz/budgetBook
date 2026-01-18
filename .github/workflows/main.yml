@@ -15,7 +15,7 @@ jobs:
 
       - name: Run Xcode Tests
         run: |
-          # 1. Simulator ID finden (robusterer Regex)
+          # 1. Simulator ID finden
           DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -n 1 | perl -ne 'print $1 if /([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})/')
           echo "Using Device ID: $DEVICE_ID"
           
@@ -24,13 +24,13 @@ jobs:
             exit 1
           fi
 
-          # 2. Den Simulator booten und warten
+          # 2. Den Simulator booten
           echo "Booting Simulator..."
           xcrun simctl boot "$DEVICE_ID" || true
           
-          # 3. Warten, bis der Boot-Vorgang abgeschlossen ist
-          echo "Waiting for simulator to be ready..."
-          xcrun simctl waitstarted "$DEVICE_ID"
+          # 3. Warten, bis der Boot-Vorgang abgeschlossen ist (Alternative zu waitstarted)
+          echo "Waiting for simulator to finish booting..."
+          xcrun simctl bootstatus "$DEVICE_ID" -w
 
           # 4. Tests starten
           echo "Starting xcodebuild..."
