@@ -15,17 +15,25 @@ jobs:
 
       - name: Run Xcode Tests
         run: |
-          # 1. Simulator ID finden (iPhone 16 auf iOS 18.5)
-          DEVICE_ID=$(xcrun simctl list devices | grep "iPhone 16" | grep "18.5" | grep -oE '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}' | head -n 1)
+          # 1. ID direkt über den Namen und das OS abfragen
+          # Das ist viel weniger fehleranfällig als manuelles Greppen
+          DEVICE_ID=$(xcrun simctl list devices "iPhone 16" available | grep "18.5" | awk -F '[()]' '{print $2}' | head -n 1)
+          
+          # Falls das fehlschlägt, nehmen wir einfach das allererste verfügbare iPhone in der Liste
+          if [ -z "$DEVICE_ID" ]; then
+            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -n 1 | grep -oE '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}')
+          fi
+
           echo "Using Device ID: $DEVICE_ID"
 
           if [ -z "$DEVICE_ID" ]; then
-            echo "Error: Could not find Device ID for iPhone 16 (18.5)"
+            echo "Error: Still no Simulator ID found. Listing all available devices for debugging:"
+            xcrun simctl list devices available
             exit 1
           fi
 
           # 2. Boot-Vorgang starten
-          echo "Booting Simulator..."
+          echo "Booting Simulator $DEVICE_ID..."
           xcrun simctl boot "$DEVICE_ID" || true
 
           # 3. Warten bis der Status "Booted" ist
@@ -40,7 +48,6 @@ jobs:
           done
 
           # 4. Tests starten
-          # Wir nutzen die ID für maximale Eindeutigkeit
           set -o pipefail && xcodebuild test \
             -project budgetPlanner.xcodeproj \
             -scheme budgetPlanner \
