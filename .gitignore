@@ -1,0 +1,15 @@
+# Git Ignore for budgetPlanner
+# Created by Tassja Bretz on 18.01.26
+
+# macOS system files
+.DS_Store
+
+# Xcode personal settings and state
+# (Hides your specific UI state, window positions, and open files)
+xcuserdata/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj
+# Build artifacts
+build/
+DerivedData/
