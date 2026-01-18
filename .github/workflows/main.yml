@@ -15,17 +15,25 @@ jobs:
 
       - name: Run Xcode Tests
         run: |
-          # 1. Simulator ID finden (stabiler als der Name)
-          DEVICE_ID=$(xcrun simctl list devices available | grep -m 1 "iPhone" | awk -F '[()]' '{print $2}')
+          # 1. Simulator ID finden (robusterer Regex)
+          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -n 1 | perl -ne 'print $1 if /([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})/')
           echo "Using Device ID: $DEVICE_ID"
-
-          # 2. Den Simulator explizit booten (löst oft Code 70)
-          xcrun simctl boot $DEVICE_ID || true
           
-          # 3. Warten, bis der Simulator bereit ist
-          xcrun simctl waitstarted $DEVICE_ID
+          if [ -z "$DEVICE_ID" ]; then
+            echo "Error: No available iPhone simulator found!"
+            exit 1
+          fi
 
-          # 4. Test ausführen
+          # 2. Den Simulator booten und warten
+          echo "Booting Simulator..."
+          xcrun simctl boot "$DEVICE_ID" || true
+          
+          # 3. Warten, bis der Boot-Vorgang abgeschlossen ist
+          echo "Waiting for simulator to be ready..."
+          xcrun simctl waitstarted "$DEVICE_ID"
+
+          # 4. Tests starten
+          echo "Starting xcodebuild..."
           set -o pipefail && xcodebuild test \
             -project budgetPlanner.xcodeproj \
             -scheme budgetPlanner \
