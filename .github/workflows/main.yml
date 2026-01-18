@@ -16,24 +16,29 @@ jobs:
       - name: Run Xcode Tests
         run: |
           # 1. Simulator ID finden
-          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -n 1 | perl -ne 'print $1 if /([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})/')
+          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -n 1 | perl -ne 'print $1 if /([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})/')
           echo "Using Device ID: $DEVICE_ID"
           
-          if [ -z "$DEVICE_ID" ]; then
-            echo "Error: No available iPhone simulator found!"
-            exit 1
-          fi
-
-          # 2. Den Simulator booten
+          # 2. Boot-Vorgang starten
           echo "Booting Simulator..."
           xcrun simctl boot "$DEVICE_ID" || true
-          
-          # 3. Warten, bis der Boot-Vorgang abgeschlossen ist (Alternative zu waitstarted)
-          echo "Waiting for simulator to finish booting..."
-          xcrun simctl bootstatus "$DEVICE_ID" -w
+
+          # 3. Warten bis der Status "Booted" ist
+          echo "Waiting for simulator to reach 'Booted' state..."
+          attempt=0
+          max_attempts=30
+          until xcrun simctl list devices | grep "$DEVICE_ID" | grep -q "Booted"; do
+            if [ $attempt -ge $max_attempts ]; then
+              echo "Timeout: Simulator did not boot in time."
+              exit 1
+            fi
+            echo "Still booting... (Attempt $((attempt+1))/$max_attempts)"
+            sleep 5
+            attempt=$((attempt+1))
+          done
+          echo "Simulator is Booted!"
 
           # 4. Tests starten
-          echo "Starting xcodebuild..."
           set -o pipefail && xcodebuild test \
             -project budgetPlanner.xcodeproj \
             -scheme budgetPlanner \
