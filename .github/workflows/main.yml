@@ -15,43 +15,33 @@ jobs:
 
       - name: Run Xcode Tests
         run: |
-          # 1. ID direkt über den Namen und das OS abfragen
-          # Das ist viel weniger fehleranfällig als manuelles Greppen
-          DEVICE_ID=$(xcrun simctl list devices "iPhone 16" available | grep "18.5" | awk -F '[()]' '{print $2}' | head -n 1)
+          # 1. Wir nutzen iPhone 16 mit iOS 18.6 (aus deiner Liste verifiziert)
+          DESTINATION="platform=iOS Simulator,name=iPhone 16,OS=18.6"
           
-          # Falls das fehlschlägt, nehmen wir einfach das allererste verfügbare iPhone in der Liste
-          if [ -z "$DEVICE_ID" ]; then
-            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -n 1 | grep -oE '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}')
-          fi
-
+          # ID für dieses spezifische Gerät holen
+          DEVICE_ID=$(xcrun simctl list devices | grep "iPhone 16" | grep "18.6" | grep -oE '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}' | head -n 1)
           echo "Using Device ID: $DEVICE_ID"
 
-          if [ -z "$DEVICE_ID" ]; then
-            echo "Error: Still no Simulator ID found. Listing all available devices for debugging:"
-            xcrun simctl list devices available
-            exit 1
-          fi
-
-          # 2. Boot-Vorgang starten
-          echo "Booting Simulator $DEVICE_ID..."
+          # 2. Boot-Vorgang
+          echo "Booting Simulator..."
           xcrun simctl boot "$DEVICE_ID" || true
 
-          # 3. Warten bis der Status "Booted" ist
+          # 3. Warten bis 'Booted'
           echo "Waiting for simulator to reach 'Booted' state..."
           for i in {1..20}; do
             if xcrun simctl list devices | grep "$DEVICE_ID" | grep -q "Booted"; then
               echo "Simulator is Booted!"
               break
             fi
-            echo "Still booting... ($i/20)"
             sleep 5
           done
 
           # 4. Tests starten
+          # WICHTIG: Wir nutzen exakt den DESTINATION String, den Xcode oben als "Available" gelistet hat
           set -o pipefail && xcodebuild test \
             -project budgetPlanner.xcodeproj \
             -scheme budgetPlanner \
-            -destination "id=$DEVICE_ID" \
+            -destination "$DESTINATION" \
             -resultBundlePath TestResults \
             | xcbeautify
 
