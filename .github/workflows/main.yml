@@ -27,7 +27,7 @@ jobs:
           echo "Using destination: $DESTINATION"
           
           set -o pipefail && xcodebuild test \
-            -scheme savingPot \
+            -scheme budgetPlanner \
             -destination "platform=iOS Simulator,name=$DESTINATION" \
             -resultBundlePath TestResults \
             | xcbeautify
