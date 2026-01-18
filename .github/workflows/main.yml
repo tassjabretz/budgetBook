@@ -15,42 +15,35 @@ jobs:
 
       - name: Run Xcode Tests
         run: |
-          # 1. Simulator ID via JSON extrahieren (der sicherste Weg)
-          # Wir nehmen das erste verfügbare iPhone, das ein gültiges iOS-Runtime hat.
-          DEVICE_ID=$(xcrun simctl list devices available iPhone -j | jq -r '.devices | to_entries | .[0].value[0].udid')
-          echo "Using Device ID: $DEVICE_ID"
+          # 1. Wir legen ein festes Gerät fest, das in deiner Liste auftaucht
+          # iPhone 16 auf iOS 18.5 ist ein Standardwert auf dem macos-latest Runner
+          DESTINATION="platform=iOS Simulator,name=iPhone 16,OS=18.5"
           
-          if [ "$DEVICE_ID" == "null" ] || [ -z "$DEVICE_ID" ]; then
-            echo "Error: No available iPhone simulator found!"
-            # Debug: Zeige was simctl sieht
-            xcrun simctl list devices available
-            exit 1
-          fi
+          # Wir holen uns die ID für dieses spezifische Gerät für den Boot-Vorgang
+          DEVICE_ID=$(xcrun simctl list devices "iPhone 16" | grep "18.5" | grep -oE '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}' | head -n 1)
+          echo "Using Device: $DESTINATION (ID: $DEVICE_ID)"
 
           # 2. Boot-Vorgang starten
-          echo "Booting Simulator $DEVICE_ID..."
+          echo "Booting Simulator..."
           xcrun simctl boot "$DEVICE_ID" || true
 
-          # 3. Warten bis der Status "Booted" ist
+          # 3. Warten bis der Status "Booted" ist (einfacher Check)
           echo "Waiting for simulator to reach 'Booted' state..."
-          attempt=0
-          max_attempts=20
-          until xcrun simctl list devices | grep "$DEVICE_ID" | grep -q "Booted"; do
-            if [ $attempt -ge $max_attempts ]; then
-              echo "Timeout: Simulator did not boot in time."
-              exit 1
+          for i in {1..20}; do
+            if xcrun simctl list devices | grep "$DEVICE_ID" | grep -q "Booted"; then
+              echo "Simulator is Booted!"
+              break
             fi
-            echo "Still booting... (Attempt $((attempt+1))/$max_attempts)"
-            sleep 10
-            attempt=$((attempt+1))
+            echo "Still booting... ($i/20)"
+            sleep 5
           done
-          echo "Simulator is Booted!"
 
           # 4. Tests starten
+          # Wir nutzen hier den Namen, das ist für xcodebuild am stabilsten
           set -o pipefail && xcodebuild test \
             -project budgetPlanner.xcodeproj \
             -scheme budgetPlanner \
-            -destination "id=$DEVICE_ID" \
+            -destination "$DESTINATION" \
             -resultBundlePath TestResults \
             | xcbeautify
      
