@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		7F2289792F0FF79D009FC27F /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F22895B2F0FF79D009FC27F /* ResultView.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		08D565F62E8F02C30001EFFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -31,7 +27,6 @@
 		086733F02F1CF4D8009745EA /* budgetPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = budgetPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		086733F12F1CF4D8009745EA /* budgetPlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = budgetPlannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		086944E62F1837050077BB2F /* budgetPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = budgetPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7F22895B2F0FF79D009FC27F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -102,7 +97,6 @@
 			children = (
 				08D565E82E8F02C10001EFFB /* budgetPlanner */,
 				08D565F82E8F02C30001EFFB /* budgetPlannerTests */,
-				7F22895B2F0FF79D009FC27F /* ResultView.swift */,
 				086944E62F1837050077BB2F /* budgetPlanner.app */,
 				086733F02F1CF4D8009745EA /* budgetPlannerTests.xctest */,
 				086733F12F1CF4D8009745EA /* budgetPlannerUITests.xctest */,
@@ -253,7 +247,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7F2289792F0FF79D009FC27F /* ResultView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
