@@ -13,22 +13,23 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-  #  Lädt die iOS Plattform-Komponenten herunter (notwendig in 2026)
-      - name: Install iOS Simulator Runtime
-        run: sudo xcodebuild -downloadPlatform iOS
-      
-          
-      
-      # 2 Run Unit Tests
       - name: Run Xcode Tests
         run: |
-          # Sucht den Namen des ersten verfügbaren iOS Simulators
-          DESTINATION=$(xcrun simctl list devices available | grep -m 1 "iPhone" | sed -E 's/.*(\(.*\)).*/\1/' | sed 's/[(|)]//g')
-          echo "Using destination: $DESTINATION"
+          # 1. Simulator ID finden (stabiler als der Name)
+          DEVICE_ID=$(xcrun simctl list devices available | grep -m 1 "iPhone" | awk -F '[()]' '{print $2}')
+          echo "Using Device ID: $DEVICE_ID"
+
+          # 2. Den Simulator explizit booten (löst oft Code 70)
+          xcrun simctl boot $DEVICE_ID || true
           
+          # 3. Warten, bis der Simulator bereit ist
+          xcrun simctl waitstarted $DEVICE_ID
+
+          # 4. Test ausführen
           set -o pipefail && xcodebuild test \
+            -project budgetPlanner.xcodeproj \
             -scheme budgetPlanner \
-            -destination "platform=iOS Simulator,name=$DESTINATION" \
+            -destination "id=$DEVICE_ID" \
             -resultBundlePath TestResults \
             | xcbeautify
      
