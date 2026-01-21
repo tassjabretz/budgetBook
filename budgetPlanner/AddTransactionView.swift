@@ -7,7 +7,7 @@ struct AddTransactionView: View {
     
     @State var titel = ""
     @State var text = ""
-    @State var amount: Double = 0.0
+    @State var amount: Double?
     @State var isError = false
     @State var showToast = false
     @State private var description: String = ""
@@ -163,7 +163,7 @@ struct AddTransactionView: View {
             categoryName: selectedCategory,
             transactionTitel: titel,
             description: text,
-            amount: amount
+            amount: amount ?? 0.0
         )
         
         if isValid {
@@ -172,7 +172,7 @@ struct AddTransactionView: View {
                 categoryName: selectedCategory,
                 transactionTitel: titel,
                 description: text,
-                amount: amount,
+                amount: amount ?? 0.00,
                 transactionType: selectedType
             )
             { error in
@@ -224,68 +224,100 @@ struct AddTransactionView: View {
     struct InputGroupView: View {
         @Binding var titel: String
         @Binding var text: String
-        @Binding var amount: Double
+        @Binding var amount: Double?
         @Binding var isError: Bool
         @Binding var selectedType: Transaction.TransactionType
-        let placeholderText = NSLocalizedString("description", comment: "test")
+        @State private var amountString: String = "0.00"
         
+        let placeholderText = NSLocalizedString("description", comment: "test")
+        @FocusState private var focusedField: Field?
+        
+        // WICHTIG: Hashable für @FocusState
+        enum Field: Hashable {
+            case title, description, amount
+        }
         
         var body: some View {
             Group {
-                TextField(
-                    "transaction_title_placeholder",
-                    text: $titel,
-                    prompt: Text("transaction_title_placeholder")
-                        .foregroundStyle(.adaptiveBlack))
-                .modifier(TextFieldModifier(isError: isError))
-              
+                // TITEL
+                TextField("transaction_title_placeholder", text: $titel, prompt: Text("transaction_title_placeholder").foregroundStyle(Color.adaptiveBlack))
+                    .focused($focusedField, equals: .title)
+                    .modifier(TextFieldModifier(isError: isError && titel.isEmpty))
                 
-                
-                if(isError && titel.isEmpty)
-                {
-                    Label(NSLocalizedString("empty_title", comment: "no title"), systemImage: "exclamationmark.circle")
+                if isError && titel.isEmpty {
+                    errorLabel("empty_title")
                 }
                 
-                TextField(
-                    placeholderText,
-                    text: $text,
-                    prompt: Text(placeholderText)
-                        .foregroundStyle(.adaptiveBlack)
-                )
-                .modifier(TextFieldModifierBig(isError: isError))
-                if(isError && text.isEmpty)
-                {
-                    Label(NSLocalizedString("empty_description", comment: "no description"), systemImage: "exclamationmark.circle")
+                // BESCHREIBUNG
+                TextField(placeholderText, text: $text, prompt: Text(placeholderText).foregroundStyle(Color.adaptiveBlack))
+                    .focused($focusedField, equals: .description)
+                    .modifier(TextFieldModifierBig(isError: isError && text.isEmpty))
+                
+                if isError && text.isEmpty {
+                    errorLabel("empty_description")
                 }
                 
-                
-                TextField("amount", value: $amount, formatter: NumberFormatter())
-                    .modifier(TextFieldModifier(isError: isError))
-                if(isError && amount == 0)
-                {
-                    Label(NSLocalizedString("empty_amount", comment: "No Amount"), systemImage: "exclamationmark.circle")
+                ZStack(alignment: .trailing) {
+                    TextField("", text: $amountString, prompt: Text("0,00"))
+                        .focused($focusedField, equals: .amount)
+                        .keyboardType(.decimalPad)
+                        .modifier(TextFieldModifier(isError: isError && amount == nil))
+                   
+                    Text("€")
+                        .foregroundStyle(amountString.isEmpty ? .gray.opacity(0.5) : .adaptiveBlack)
+                        .padding(.trailing, 16)
+                        .font(.body)
+                    
+                    
                 }
+                
+                if isError && amount == 0.00  {
+                    errorLabel("empty_amount")
+                }
+                
                 
                 HStack {
                     Text(selectedType.localizedName)
                     Spacer()
                 }
                 .modifier(TextFieldModifier(isError: false))
-                
-                
             }
-            
-            .onChange(of: [titel, text]) {
-                if isError {
-                    isError = false
+         
+            .onChange(of: focusedField) { oldValue, newValue in
+                // Wenn newValue nicht nil ist, bedeutet das, ein Feld wurde ausgewählt
+                if newValue != nil {
+                    withAnimation {
+                        isError = false
+                    }
                 }
             }
-            .onChange(of: amount) {
-                if isError {
-                    isError = false
-                }
-            }
+            .onChange(of: titel) { isError = false }
+            .onChange(of: text) { isError = false }
             
+            .onChange(of: amountString) { oldValue, newValue in
+                // 1. Filtern (nur Zahlen und Komma)
+                let filtered = newValue.filter { "0123456789,.".contains($0) }
+                if filtered != newValue {
+                    amountString = filtered
+                }
+                
+                // 2. Umwandlung in Double
+                let normalized = filtered.replacingOccurrences(of: ",", with: ".")
+                if let doc = Double(normalized) {
+                    amount = doc
+                    // WICHTIG: Hier sofort den Fehler löschen, wenn die Zahl gültig ist!
+                    withAnimation {
+                        isError = false
+                    }
+                } else {
+                    amount = nil
+                }
+            }        }
+        
+        private func errorLabel(_ key: String) -> some View {
+            Label(NSLocalizedString(key, comment: ""), systemImage: "exclamationmark.circle")
+                .font(.caption)
+                .foregroundStyle(.red)
         }
     }
     
