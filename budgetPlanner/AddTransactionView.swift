@@ -257,21 +257,13 @@ struct AddTransactionView: View {
                     errorLabel("empty_description")
                 }
                 
-                ZStack(alignment: .trailing) {
-                    TextField("", text: $amountString, prompt: Text("0,00"))
-                        .focused($focusedField, equals: .amount)
-                        .keyboardType(.decimalPad)
-                        .modifier(TextFieldModifier(isError: isError && amount == nil))
-                   
-                    Text("€")
-                        .foregroundStyle(amountString.isEmpty ? .gray.opacity(0.5) : .adaptiveBlack)
-                        .padding(.trailing, 16)
-                        .font(.body)
-                    
-                    
-                }
+                TextField("0,00", value: $amount, format: .currency(code: "EUR"),  prompt: Text("0,00 €").foregroundStyle(Color.adaptiveBlack))
+                    .focused($focusedField, equals: .amount)
+                    .keyboardType(.decimalPad)
+                    .modifier(TextFieldModifier(isError: isError && amount == nil))
+              
                 
-                if isError && amount == 0.00  {
+                if isError && amount == nil  {
                     errorLabel("empty_amount")
                 }
                 
