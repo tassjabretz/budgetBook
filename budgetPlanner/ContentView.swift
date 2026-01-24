@@ -87,3 +87,35 @@ struct ContentView: View {
     Home(selectedTab:.constant(0))
 }
 
+extension View {
+    func handleCompletion(
+        error: Error?,
+        successKey: String,
+        message: Binding<String?>,
+        messageTitle: Binding<String?>,
+        showResultView: Binding<Bool>,
+        showToast: Binding<Bool>,
+        dismiss: DismissAction? = nil,
+        onSuccess: @escaping () -> Void
+    ) {
+        if let error = error {
+      
+            message.wrappedValue = error.localizedDescription
+            messageTitle.wrappedValue = "Fehler"
+            showResultView.wrappedValue = true
+        } else {
+            // Erfolgs-Zustand
+            message.wrappedValue = NSLocalizedString(successKey, comment: "")
+            withAnimation {
+                showToast.wrappedValue = true
+                onSuccess()
+            }
+            
+            // Verzögertes Schließen der View
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                dismiss?()
+            }
+        }
+    }
+}
+

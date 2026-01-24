@@ -18,7 +18,7 @@ struct Settings: View {
                     .font(.title3)
                     .foregroundStyle(Color.adaptiveBlack)
                 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     NavigationLink(destination: Categories(isOutcome: true, selectedTab: $selectedTab)) {
                         HStack(alignment: .center) {
                             Text("categories_outcome")
@@ -47,13 +47,13 @@ struct Settings: View {
                 }
                 .modifier(containerBorder())
             }
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, ) {
                 Text("app_settings")
                     .font(.title3)
                     .padding(.bottom)
                     .foregroundStyle(Color.adaptiveBlack)
                 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .center) {
                         
                         
@@ -65,18 +65,35 @@ struct Settings: View {
                         
                         Picker("Modus", selection: $appearanceSelection) {
                             ForEach(AppearanceMode.allCases) { mode in
-                                HStack {
+                                HStack (alignment: .center) {
                                     Text(NSLocalizedString(mode.title, comment: ""))
                                     Image(systemName: mode.icon)
-                                    
-                                }.tag(mode.rawValue)
+                                      
+                                }
+                                
+                                .tag(mode.rawValue)
+                              
+                               
                             }
+                            
+                           
+                            
                         }
+                        
+                       
+                      
+                       
                         .pickerStyle(.menu)
                         .tint(.secondary)
+                        
+                  
+                        
                     }
+                   
+                    .padding(10)
+          
                     
-                    .padding()
+                   
                     
                     Divider()
                         .frame(height: 0.3)
@@ -84,29 +101,35 @@ struct Settings: View {
                     
                     
                     
-                    HStack {
-                        Button {
-                            openAppSettings()
-                        } label: {
+                    
+                    Button {
+                        openAppSettings()
+                    } label: {
+                        HStack(alignment: .center) {
                             Text("language")
+                                .font(.headline)
                                 .foregroundStyle(Color.adaptiveBlack)
+                            
                             Spacer()
+                            
                             Text(currentLanguageName)
+                                .foregroundStyle(.secondary)
+                            
                             Image(systemName: "arrow.right")
+                                .foregroundStyle(.secondary)
                         }
-                        .foregroundStyle(.secondary)
+                        .padding()
+                      
+                        .contentShape(Rectangle())
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.plain)
                         
                         Divider()
                             .frame(height: 0.3)
                             .overlay(.secondary)
-                    }
-                    .font(.headline)
-                    .padding()
-                    
-                    Divider()
-                        .frame(height: 0.3)
-                        .overlay(.secondary)
-                    
+                 
+                 
                     NavigationLink(destination: ImpressumView()) {
                         HStack {
                             Text("Impressum")
@@ -121,6 +144,7 @@ struct Settings: View {
                     Divider()
                         .frame(height: 0.3)
                         .overlay(.secondary)
+                    
                     NavigationLink(destination: PrivacyPolicyView()) {
                         HStack {
                             Text("Datenschutz")
@@ -132,9 +156,7 @@ struct Settings: View {
                         }
                         .padding()
                     }
-                    Divider()
-                        .frame(height: 0.0)
-                        .overlay(.secondary)
+                  
                     
                     
                 }
@@ -148,7 +170,7 @@ struct Settings: View {
                     .font(.title3)
                     .padding(.bottom)
                     .foregroundStyle(Color.adaptiveBlack)
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     NavigationLink(destination: FullAppTourView()) {
                         HStack(alignment: .center) {
                             Text("App-Tour")

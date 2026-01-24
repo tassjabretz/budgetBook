@@ -197,6 +197,8 @@ struct AddTransactionView: View {
                             
                             
                             showToast = false
+                            
+                            dismiss()
                         }
                     }
                     
@@ -214,8 +216,6 @@ struct AddTransactionView: View {
         else {
             self.isError = true
         }
-        
-        
         
     }
     
@@ -239,7 +239,7 @@ struct AddTransactionView: View {
         
         var body: some View {
             Group {
-                // TITEL
+     
                 TextField("transaction_title_placeholder", text: $titel, prompt: Text("transaction_title_placeholder").foregroundStyle(Color.adaptiveBlack))
                     .focused($focusedField, equals: .title)
                     .modifier(TextFieldModifier(isError: isError && titel.isEmpty))
@@ -248,7 +248,7 @@ struct AddTransactionView: View {
                     errorLabel("empty_title")
                 }
                 
-                // BESCHREIBUNG
+      
                 TextField(placeholderText, text: $text, prompt: Text(placeholderText).foregroundStyle(Color.adaptiveBlack))
                     .focused($focusedField, equals: .description)
                     .modifier(TextFieldModifierBig(isError: isError && text.isEmpty))
@@ -257,10 +257,18 @@ struct AddTransactionView: View {
                     errorLabel("empty_description")
                 }
                 
-                TextField("0,00", value: $amount, format: .currency(code: "EUR"),  prompt: Text("0,00 €").foregroundStyle(Color.adaptiveBlack))
-                    .focused($focusedField, equals: .amount)
-                    .keyboardType(.decimalPad)
-                    .modifier(TextFieldModifier(isError: isError && amount == nil))
+                HStack(spacing: 4) {
+                    TextField("0,00", value: $amount, format: .number.precision(.fractionLength(2)), prompt: Text("0,00").foregroundStyle(.adaptiveBlack))
+                        .focused($focusedField, equals: .amount)
+                        .keyboardType(.decimalPad)
+                        .fixedSize(horizontal: true, vertical: false)
+                    Text("€")
+                        .foregroundStyle(Color.adaptiveBlack)
+                       
+                   Spacer()
+                }
+ 
+                .modifier(TextFieldModifier(isError: isError && amount == nil))
               
                 
                 if isError && amount == nil  {
@@ -276,7 +284,6 @@ struct AddTransactionView: View {
             }
          
             .onChange(of: focusedField) { oldValue, newValue in
-                // Wenn newValue nicht nil ist, bedeutet das, ein Feld wurde ausgewählt
                 if newValue != nil {
                     withAnimation {
                         isError = false
@@ -286,25 +293,7 @@ struct AddTransactionView: View {
             .onChange(of: titel) { isError = false }
             .onChange(of: text) { isError = false }
             
-            .onChange(of: amountString) { oldValue, newValue in
-                // 1. Filtern (nur Zahlen und Komma)
-                let filtered = newValue.filter { "0123456789,.".contains($0) }
-                if filtered != newValue {
-                    amountString = filtered
-                }
-                
-                // 2. Umwandlung in Double
-                let normalized = filtered.replacingOccurrences(of: ",", with: ".")
-                if let doc = Double(normalized) {
-                    amount = doc
-                    // WICHTIG: Hier sofort den Fehler löschen, wenn die Zahl gültig ist!
-                    withAnimation {
-                        isError = false
-                    }
-                } else {
-                    amount = nil
-                }
-            }        }
+        }
         
         private func errorLabel(_ key: String) -> some View {
             Label(NSLocalizedString(key, comment: ""), systemImage: "exclamationmark.circle")

@@ -173,12 +173,16 @@ struct EditTransactionView: View {
             Text("amount")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
             
             HStack {
-                TextField("", value: $amount, format: .currency(code: "EUR"))
+                TextField("", value: $amount, format: .number.precision(.fractionLength(2)))
                     .keyboardType(.decimalPad)
                     .disabled(!isEditing)
                     .focused($focusedField, equals: .amount)
+                    .foregroundStyle(isEditing ? .primary : .secondary)
+                    .fixedSize(horizontal: true, vertical: false)
+                Text("€")
                     .foregroundStyle(isEditing ? .primary : .secondary)
                 
                 Spacer()
@@ -246,7 +250,17 @@ struct EditTransactionView: View {
             newAmount: amount,
             newType: selectedTransactionType
         ) { error in
-            handleCompletion(error: error, successKey: "transaction_edit_success")
+            handleCompletion(
+                error: error,
+                successKey: "transaction_edit_success",
+                message: $message,
+                messageTitle: $messageTitle,
+                showResultView: $showResultView,
+                showToast: $showToast,
+                dismiss: dismiss,
+                onSuccess: {}
+              
+            )
         }
     }
 
@@ -256,21 +270,22 @@ struct EditTransactionView: View {
             transaction: transaction,
             newCategoryKey: selectedCategoryName
         ) { error in
-            handleCompletion(error: error, successKey: "transaction_delete_success")
+            handleCompletion(
+                error: error,
+                successKey: "transaction_delete_success",
+                message: $message,
+                messageTitle: $messageTitle,
+                showResultView: $showResultView,
+                showToast: $showToast,
+                dismiss: dismiss,
+                onSuccess: {}
+              
+            )
         }
+        
     }
 
-    private func handleCompletion(error: Error?, successKey: String) {
-        if let error = error {
-            message = error.localizedDescription
-            messageTitle = "Fehler"
-            showResultView = true
-        } else {
-            message = NSLocalizedString(successKey, comment: "")
-            withAnimation { showToast = true }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { dismiss() }
-        }
-    }
+  
 }
 
 #Preview {
