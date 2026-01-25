@@ -1,6 +1,5 @@
 import SwiftUI
 
-import SwiftUI
 
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss
@@ -39,8 +38,6 @@ struct PrivacyPolicyView: View {
             }
         }
     }
-    
-    // Unter-Komponenten für bessere Übersicht
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Datenschutzerklärung")
@@ -54,7 +51,7 @@ struct PrivacyPolicyView: View {
     private var contactSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Verantwortliche Stelle").font(.headline)
-            Text("Tassja Bretz\nMoorrand 8C\n22455 Hamburg\ntassja.bretz@gmail.com")
+            Text("Vorname Nachname\nStraße Hausnummer\nPLZ Ort\nemail@email.com")
                 .font(.body)
         }
         .padding(.top, 10)

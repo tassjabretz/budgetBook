@@ -44,18 +44,18 @@ struct AddTransactionView: View {
                     
                 }
             }
+            Spacer()
+            
+            HStack {
+                Spacer()
+                Button(action: saveTransaction) {
+                    Text("add_transaction")
+                        .modifier(ButtonNormal(buttonTitel: ""))
+                }
                 Spacer()
                 
-                HStack {
-                    Spacer()
-                    Button(action: saveTransaction) {
-                        Text("add_transaction")
-                            .modifier(ButtonNormal(buttonTitel: ""))
-                    }
-                    Spacer()
-                    
-                }
-                
+            }
+            
             
             
             .onChange(of: selectedType) { _, newValue in
@@ -86,26 +86,26 @@ struct AddTransactionView: View {
                 }
             }
             
-        
-        .task {
-            do {
-                let initialCheckCategory = try modelContext.fetch(FetchDescriptor<Category>())
-                if initialCheckCategory.isEmpty {
-                    CategoryFunctions().applyCategories(modelContext: modelContext)
+            
+            .task {
+                do {
+                    let initialCheckCategory = try modelContext.fetch(FetchDescriptor<Category>())
+                    if initialCheckCategory.isEmpty {
+                        CategoryFunctions().applyCategories(modelContext: modelContext)
+                    }
+                    
+                    
+                    if selectedType == .outcome {
+                        categories = CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
+                        selectedCategory = "rent"
+                    } else {
+                        categories = CategoryFunctions().fetchCategoriesIncome(modelContext: modelContext)
+                        selectedCategory = "salary"
+                    }
+                } catch {
+                    print("Initial data check failed: \(error)")
                 }
-                
-                
-                if selectedType == .outcome {
-                    categories = CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
-                   selectedCategory = "rent"
-                } else {
-                    categories = CategoryFunctions().fetchCategoriesIncome(modelContext: modelContext)
-                    selectedCategory = "salary"
-                }
-            } catch {
-                print("Initial data check failed: \(error)")
             }
-        }
         }
         .toast(isShowing: $showToast, message: message ?? "Unbekannter Status")
         .overlay(loadingIndicators)
@@ -188,7 +188,7 @@ struct AddTransactionView: View {
                     message =  NSLocalizedString("transaction_add_success", comment: "success message")
                     withAnimation {
                         showToast = true
-                       
+                        
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                         withAnimation {
@@ -204,11 +204,11 @@ struct AddTransactionView: View {
                     
                     showResultView = false
                     
-                   
+                    
                     titel = ""
                     text = ""
                     amount = 0
-                   
+                    
                 }
                 
             }
@@ -239,7 +239,7 @@ struct AddTransactionView: View {
         
         var body: some View {
             Group {
-     
+                
                 TextField("transaction_title_placeholder", text: $titel, prompt: Text("transaction_title_placeholder").foregroundStyle(Color.adaptiveBlack))
                     .focused($focusedField, equals: .title)
                     .modifier(TextFieldModifier(isError: isError && titel.isEmpty))
@@ -248,7 +248,7 @@ struct AddTransactionView: View {
                     errorLabel("empty_title")
                 }
                 
-      
+                
                 TextField(placeholderText, text: $text, prompt: Text(placeholderText).foregroundStyle(Color.adaptiveBlack))
                     .focused($focusedField, equals: .description)
                     .modifier(TextFieldModifierBig(isError: isError && text.isEmpty))
@@ -264,12 +264,12 @@ struct AddTransactionView: View {
                         .fixedSize(horizontal: true, vertical: false)
                     Text("€")
                         .foregroundStyle(Color.adaptiveBlack)
-                       
-                   Spacer()
+                    
+                    Spacer()
                 }
- 
+                
                 .modifier(TextFieldModifier(isError: isError && amount == nil))
-              
+                
                 
                 if isError && amount == nil  {
                     errorLabel("empty_amount")
@@ -282,7 +282,7 @@ struct AddTransactionView: View {
                 }
                 .modifier(TextFieldModifier(isError: false))
             }
-         
+            
             .onChange(of: focusedField) { oldValue, newValue in
                 if newValue != nil {
                     withAnimation {
@@ -379,17 +379,17 @@ struct AddTransactionView: View {
             .frame(height: 100)
             .modifier(TextFieldModifierBig(isError: false))
             
-           
+            
         }
     }
 }
 
-    
+
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Transaction.self, Category.self, configurations: config)
     
-
+    
     let categories = [
         Category(categoryName: "Essen", iconName: "cart", defaultBudget: 300.0, isOutgoing: true),
         Category(categoryName: "Freizeit", iconName: "star", defaultBudget: 100.0, isOutgoing: true),

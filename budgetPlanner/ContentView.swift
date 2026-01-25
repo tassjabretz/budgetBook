@@ -4,21 +4,21 @@ import SwiftUI
 
 struct ContentView: View {
     
-
+    
     @State private var selectedTab = 0
     
     @Environment(\.modelContext) var modelContext
-   
+    
     @Environment(\.colorScheme) var colorScheme
-
+    
     var body: some View {
         
-      
-   
+        
+        
         Group {
             TabView(selection: $selectedTab) {
                 
-             
+                
                 NavigationStack {
                     Home(selectedTab: $selectedTab)
                         .navigationTitle("transaktionen")
@@ -30,8 +30,8 @@ struct ContentView: View {
                     Label("transaktionen_tab", systemImage: "house.fill")
                 }
                 .tag(0)
-                    
- 
+                
+                
                 NavigationStack {
                     AddTransactionView(selectedTab: $selectedTab)
                         .navigationTitle("add_transaction")
@@ -44,7 +44,7 @@ struct ContentView: View {
                 }
                 .tag(1)
                 
-               
+                
                 NavigationStack {
                     Settings(selectedTab: $selectedTab)
                         .navigationTitle("settings")
@@ -60,18 +60,18 @@ struct ContentView: View {
         }
         
         .onAppear {
-                        
-              
-                        CategoryFunctions().checkAndResetMonthlyBudget(modelContext: modelContext)
-                        
-                    }
-    
+            
+            
+            CategoryFunctions().checkAndResetMonthlyBudget(modelContext: modelContext)
+            
+        }
         
-
+        
+        
         
         .tint(.adaptiveBlack)
         
-
+        
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("Finanzomat")
@@ -87,6 +87,9 @@ struct ContentView: View {
     Home(selectedTab:.constant(0))
 }
 
+/*
+ This Extension provide Error Mesage as a Sheet when action was not successfully or a Toast when action was successfully vor any View
+ */
 extension View {
     func handleCompletion(
         error: Error?,
@@ -99,19 +102,19 @@ extension View {
         onSuccess: @escaping () -> Void
     ) {
         if let error = error {
-      
+            
             message.wrappedValue = error.localizedDescription
             messageTitle.wrappedValue = "Fehler"
             showResultView.wrappedValue = true
         } else {
-            // Erfolgs-Zustand
+            
             message.wrappedValue = NSLocalizedString(successKey, comment: "")
             withAnimation {
                 showToast.wrappedValue = true
                 onSuccess()
             }
             
-            // Verzögertes Schließen der View
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                 dismiss?()
             }

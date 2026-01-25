@@ -12,6 +12,6 @@ internal import Combine
 
 class NavigationManager: ObservableObject {
 
-    @Published var shouldShowResultSheet = false
+   
  
 }

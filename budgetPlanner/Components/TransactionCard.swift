@@ -1,10 +1,3 @@
-//
-//  TransactionCard.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 03.10.25.
-//
-
 import SwiftUI
 
 struct TransactionCard: View {
@@ -20,7 +13,7 @@ struct TransactionCard: View {
         HStack(spacing: 15) {
             
             roundImage(imageName: transaction.category?.iconName ?? "questionmark")
-      
+            
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.titel).font(.headline).foregroundStyle(Color.gray)
@@ -90,6 +83,6 @@ struct TransactionCard: View {
     
     TransactionCard(transaction: sampleTransaction)
     TransactionCard(transaction: sampleTransaction2)
-
+    
 }
 

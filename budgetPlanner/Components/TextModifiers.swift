@@ -1,9 +1,4 @@
-//
-//  TextModifiers.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 17.10.25.
-//
+
 
 import Foundation
 import SwiftUI
@@ -39,14 +34,14 @@ struct TextFieldModifierBig: ViewModifier {
             )
     }
 }
-    
-  
+
+
 
 
 struct TextFieldModifier: ViewModifier {
     var isError: Bool
     @Environment(\.colorScheme) var colorScheme
-
+    
     func body(content: Content) -> some View {
         content
             .padding(.horizontal, 16)
@@ -71,18 +66,10 @@ struct TextFieldModifier: ViewModifier {
                     )
             )
     }
-
     
-    
-            
-   
-     
-    
-    
-  
 }
 
-    let currencyFormatter: NumberFormatter = {
+let currencyFormatter: NumberFormatter = {
     let formatter = NumberFormatter()
     formatter.numberStyle = .currency
     formatter.locale = Locale.current

@@ -1,15 +1,12 @@
-//
-//  CategoryFunctions.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 18.10.25.
-//
 
 import Foundation
 import SwiftData
 
 final class CategoryFunctions {
     
+    /**
+     This function get all avaliable Outcome Categories as an array from Type Category
+     */
     func fetchCategoriesOutcome(modelContext: ModelContext) -> [Category]  {
         
         
@@ -29,6 +26,10 @@ final class CategoryFunctions {
         return []
     }
     
+    
+    /**
+     This function get all avaliable Income Categories as an array from Type Category
+     */
     func fetchCategoriesIncome(modelContext: ModelContext) -> [Category]  {
         
         
@@ -48,6 +49,9 @@ final class CategoryFunctions {
         return []
     }
     
+    /**
+     This function get all avaliable Categories as an array from Type Category
+     */
     func fetchCategories(modelContext: ModelContext) -> [Category]  {
         
         
@@ -67,10 +71,12 @@ final class CategoryFunctions {
     }
     
     
-    
+    /**
+     This function set all avaliable  Categories
+     */
     func applyCategories (modelContext: ModelContext)  {
         let categories = [
-      
+            
             Category(categoryName: "shopping", iconName: "carrot", defaultBudget: 200, isOutgoing: true),
             Category(categoryName: "restaurant", iconName: "fork.knife", defaultBudget: 100, isOutgoing: true),
             Category(categoryName: "handy", iconName: "smartphone", defaultBudget: 25, isOutgoing: true),
@@ -90,16 +96,19 @@ final class CategoryFunctions {
             Category(categoryName: "rent", iconName: "house", defaultBudget: 1000, isOutgoing: true),
             Category(categoryName: "familiy_friends", iconName: "person.2",  defaultBudget: 50, isOutgoing: true),
             Category(categoryName: "special", iconName: "plus",  defaultBudget: 30.00, isOutgoing: true),
-  
+            
             Category(categoryName: "credit", iconName: "eurosign.bank.building", defaultBudget: 200, isOutgoing: true),
             Category(categoryName: "party", iconName: "music.microphone", defaultBudget: 100, isOutgoing: true),
             Category(categoryName: "familiy_friends", iconName: "person.crop.circle.badge.plus",  defaultBudget: 0.0, isOutgoing: false),
             Category(categoryName: "salary", iconName: "banknote",  defaultBudget: 0.0, isOutgoing: false),
             Category(categoryName: "investment", iconName: "eurosign",  defaultBudget: 0.0, isOutgoing: false),
             Category(categoryName: "special", iconName: "questionmark",  defaultBudget: 0.0, isOutgoing: false),
-    
-       
-      
+            
+            Category(categoryName: "streaming", iconName: "tv.and.mediabox",  defaultBudget: 30, isOutgoing: true),
+            Category(categoryName: "abo", iconName: "calendar.badge.plus",  defaultBudget: 30, isOutgoing: true),
+            
+            
+            
         ]
         
         for category in categories {
@@ -118,6 +127,10 @@ final class CategoryFunctions {
         
     }
     
+    /**
+     This function save the changes from all categories to the model
+     */
+    
     func saveAllCategories(
         modelContext: ModelContext,
         completion: @escaping (Error?) -> Void
@@ -131,103 +144,115 @@ final class CategoryFunctions {
             completion(error)
         }
     }
+    
+    /**
+     This function change the current Budget of a category after add a new transansaction
+     */
+    func setNewBudgetAfterNewTransaction (
+        modelContext: ModelContext,
+        category: Category,
+        transaction: Transaction,
         
-        func setNewBudgetAfterNewTransaction (
-            modelContext: ModelContext,
-            category: Category,
-            transaction: Transaction,
-            
-        ) {
-            
-            
-            
-            if(transaction.type == .outcome)
-            {
-                category.currentBudget = category.currentBudget - transaction.amount
-                
-            }
-            else
-            
-            {
-                category.currentBudget = category.currentBudget + transaction.amount
-            }
-            
-            
+    ) {
+        
+        
+        
+        if(transaction.type == .outcome)
+        {
+            category.currentBudget = category.currentBudget - transaction.amount
             
         }
+        else
         
-        func setNewBudgetAfterEditTransaction(
-            modelContext: ModelContext,
-            oldCategory: Category,
-            transaction: Transaction,
-            newCategory: Category,
-            newAmount: Double,
-            newType: Transaction.TransactionType
-        ) {
-            
-            if transaction.type == .outcome {
-                oldCategory.currentBudget += transaction.amount
-            } else {
-                oldCategory.currentBudget -= transaction.amount
-            }
-            
-            
-            oldCategory.currentBudget = min(oldCategory.currentBudget, oldCategory.defaultBudget)
-            
-            
-            if newType == .outcome {
-                newCategory.currentBudget -= newAmount
-                newCategory.currentBudget = min(newCategory.currentBudget, newCategory.defaultBudget)
-            } else {
-                newCategory.currentBudget += newAmount
-                
-            }
-            
-            
-        }
-        func undoBudgetImpactBeforeDeletion(
-            modelContext: ModelContext,
-            category: Category,
-            transaction: Transaction
-        )  {
-            
-            if transaction.type == .outcome {
-                
-                category.currentBudget += transaction.amount
-            } else {
-                
-                category.currentBudget -= transaction.amount
-            }
-            
-            
+        {
+            category.currentBudget = category.currentBudget + transaction.amount
         }
         
-        func checkAndResetMonthlyBudget(modelContext: ModelContext, currentDate: Date = .now) {
-            
-            let outcomeCategories: [Category] = CategoryFunctions().fetchCategories(modelContext: modelContext)
-            
-            let calendar = Calendar.current
-            let month = calendar.component(.month, from: currentDate)
-            let year = calendar.component(.year, from: currentDate)
-            
-            
-            let lastResetKey = "lastBudgetResetDate"
-            let lastResetIdentifier = UserDefaults.standard.string(forKey: lastResetKey) ?? ""
-            let currentIdentifier = "\(month)-\(year)"
-            
-            
-            if lastResetIdentifier != currentIdentifier {
-                for category in outcomeCategories {
-                    category.currentBudget = category.defaultBudget
-                }
-                
-                UserDefaults.standard.set(currentIdentifier, forKey: lastResetKey)
-                try? modelContext.save()
-                
-            }
-        }
+        
+        
     }
     
+    /**
+     This function change the current Budget of a category after edit a  transansaction
+     */
+    func setNewBudgetAfterEditTransaction(
+        modelContext: ModelContext,
+        oldCategory: Category,
+        transaction: Transaction,
+        newCategory: Category,
+        newAmount: Double,
+        newType: Transaction.TransactionType
+    ) {
+        
+        if transaction.type == .outcome {
+            oldCategory.currentBudget += transaction.amount
+        } else {
+            oldCategory.currentBudget -= transaction.amount
+        }
+        
+        
+        oldCategory.currentBudget = min(oldCategory.currentBudget, oldCategory.defaultBudget)
+        
+        
+        if newType == .outcome {
+            newCategory.currentBudget -= newAmount
+            newCategory.currentBudget = min(newCategory.currentBudget, newCategory.defaultBudget)
+        } else {
+            newCategory.currentBudget += newAmount
+            
+        }
+        
+        
+    }
+    /**
+     This function change the current Budget of a category after delete a  transansaction
+     */
+    func undoBudgetImpactBeforeDeletion(
+        modelContext: ModelContext,
+        category: Category,
+        transaction: Transaction
+    )  {
+        
+        if transaction.type == .outcome {
+            
+            category.currentBudget += transaction.amount
+        } else {
+            
+            category.currentBudget -= transaction.amount
+        }
+        
+        
+    }
     
-    
+    /**
+     This function set the default Budget to a providev value eyery first of Month
+     */
+    func checkAndResetMonthlyBudget(modelContext: ModelContext, currentDate: Date = .now) {
+        
+        let outcomeCategories: [Category] = CategoryFunctions().fetchCategories(modelContext: modelContext)
+        
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: currentDate)
+        let year = calendar.component(.year, from: currentDate)
+        
+        
+        let lastResetKey = "lastBudgetResetDate"
+        let lastResetIdentifier = UserDefaults.standard.string(forKey: lastResetKey) ?? ""
+        let currentIdentifier = "\(month)-\(year)"
+        
+        
+        if lastResetIdentifier != currentIdentifier {
+            for category in outcomeCategories {
+                category.currentBudget = category.defaultBudget
+            }
+            
+            UserDefaults.standard.set(currentIdentifier, forKey: lastResetKey)
+            try? modelContext.save()
+            
+        }
+    }
+}
+
+
+
 

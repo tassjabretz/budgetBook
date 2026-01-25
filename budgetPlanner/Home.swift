@@ -7,15 +7,15 @@ struct Home: View {
     @Binding var selectedTab: Int
     @State private var isLoading = true
     
-   
+    
     @State private var showToast = false
-        @State private var message: String?
-        @State private var messageTitle: String?
-        @State private var showResultView = false
-        
-        @Environment(\.dismiss) var dismiss
-
-
+    @State private var message: String?
+    @State private var messageTitle: String?
+    @State private var showResultView = false
+    
+    @Environment(\.dismiss) var dismiss
+    
+    
     
     var body: some View {
         NavigationStack {
@@ -75,32 +75,32 @@ struct Home: View {
         
         
     }
+    
+    private var transactionListContent: some View {
         
-        private var transactionListContent: some View {
-            
-            List {
-                ForEach(transactions) { transaction in // Nutze direkt das Objekt statt Index
-                    NavigationLink(destination: EditTransactionView(transaction: transaction, selectedTab: $selectedTab)) {
-                        TransactionCard(transaction: transaction)
+        List {
+            ForEach(transactions) { transaction in // Nutze direkt das Objekt statt Index
+                NavigationLink(destination: EditTransactionView(transaction: transaction, selectedTab: $selectedTab)) {
+                    TransactionCard(transaction: transaction)
+                }
+                // .listRowInsets(EdgeInsets()) // 1. Entfernt das innere Padding der Zeile
+                .listRowBackground(Color.clear) // Macht den Zellen-Hintergrund unsichtbar
+                .listRowSeparator(.hidden)
+                .navigationLinkIndicatorVisibility(.hidden)
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        deleteTransaction(transaction: transaction)
+                    } label: {
+                        Label("delete_transaction", systemImage: "trash")
                     }
-                    // .listRowInsets(EdgeInsets()) // 1. Entfernt das innere Padding der Zeile
-                    .listRowBackground(Color.clear) // Macht den Zellen-Hintergrund unsichtbar
-                    .listRowSeparator(.hidden)
-                    .navigationLinkIndicatorVisibility(.hidden)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            deleteTransaction(transaction: transaction)
-                        } label: {
-                            Label("delete_transaction", systemImage: "trash")
-                        }
-                        .tint(.red)
-                    }
+                    .tint(.red)
                 }
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        
+    }
     
     
     func deleteTransaction(transaction: Transaction) {

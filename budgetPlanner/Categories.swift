@@ -6,16 +6,16 @@ struct Categories: View {
     @Environment(\.modelContext) var modelContext
     @Binding var selectedTab: Int
     
-
+    
     
     @Query var categories: [Category]
-
+    
     @State private var showToast: Bool = false
     @State private var message: String?
-
+    
     @State private var showSheet = false
     
-
+    
     @State private var messageTitle: String?
     @State private var showResultView = false
     
@@ -31,7 +31,7 @@ struct Categories: View {
     var body: some View {
         
         let navTitel = isOutcome ? "categories_outcome" : "categories_income"
-     
+        
         ScrollView {
             VStack(alignment: .leading) {
                 
@@ -95,7 +95,7 @@ struct Categories: View {
             HStack() {
                 Spacer()
                 Image(systemName: "info.circle")
-                  
+                
                 Text("information_linktext")
                 Spacer()
             }
@@ -105,47 +105,47 @@ struct Categories: View {
             }
             .sheet(isPresented: $showSheet) {
                 VStack(alignment: .center) {
-             
-
-             
+                    
+                    
+                    
+                    
+                    VStack(alignment: .center) {
+                        Spacer()
+                        Image(systemName: "info.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.secondary)
+                            .padding()
                         
-                        VStack(alignment: .center) {
-                           Spacer()
-                            Image(systemName: "info.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.secondary)
-                                .padding()
-                            
-                            Text(LocalizedStringKey("info_categories"))
-                                .font(.body)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                            Spacer()
-
-                          
-
-                            
-                        }
-                        .padding()
+                        Text(LocalizedStringKey("info_categories"))
+                            .font(.body)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        Spacer()
+                        
+                        
+                        
+                        
+                    }
+                    .padding()
                     
                 }
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
             }
-           
+            
         }
     }
-               
-                
-            
-           
-            
-        
-       
-       
-        
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     func saveBudget() {
         CategoryFunctions().saveAllCategories(modelContext: modelContext) { error in
@@ -172,7 +172,7 @@ struct Categories: View {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Transaction.self, Category.self, configurations: config)
     
-
+    
     let categories = [
         Category(categoryName: "Essen", iconName: "cart", defaultBudget: 300.0, isOutgoing: true),
         Category(categoryName: "Freizeit", iconName: "star", defaultBudget: 100.0, isOutgoing: true),
@@ -181,8 +181,8 @@ struct Categories: View {
     
     categories.forEach { container.mainContext.insert($0) }
     
-     return NavigationStack {
-         Categories(isOutcome: true, selectedTab: .constant(0))
+    return NavigationStack {
+        Categories(isOutcome: true, selectedTab: .constant(0))
             .modelContainer(container)
     }
 }

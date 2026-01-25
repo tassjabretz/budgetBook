@@ -1,29 +1,29 @@
 import SwiftUI
 
 struct ImpressumView: View {
-  
+    
     
     var body: some View {
         NavigationStack {
             List {
                 Section(header: Text("Angaben gemäß § 5 TMG")) {
-                    InfoRow(label: "Name", value: "Tassja Bretz")
-                    InfoRow(label: "Straße", value: "Moorrand 8C")
-                    InfoRow(label: "PLZ/Ort", value: "22455 Hamburg")
+                    InfoRow(label: "Name", value: "Vorname Nachname")
+                    InfoRow(label: "Straße", value: "Straße Hausnummer")
+                    InfoRow(label: "PLZ/Ort", value: "PLZ Ort")
                 }
                 
                 Section(header: Text("Kontakt")) {
-                    InfoRow(label: "E-Mail", value: "tassja.bretz@gmail.com")
-                    InfoRow(label: "Telefon", value: "+17645889465")
+                    InfoRow(label: "E-Mail", value: "email.email@email.com")
+                    InfoRow(label: "Telefon", value: "+123456789")
                 }
                 
                 Section(header: Text("Rechtliches"), footer: Text("Plattform der EU-Kommission zur Online-Streitbeilegung: https://ec.europa.eu/consumers/odr/")) {
-                                    Text("Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Text("Tassja Bretz\nMoorand 8C\n22455 Hamburg")
-                                        .font(.footnote)
-                                }            }
+                    Text("Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("Vorname Nachnachname\nStraße Hausnummer \n PLZ Or")
+                        .font(.footnote)
+                }            }
             .navigationTitle("Impressum")
             .navigationBarTitleDisplayMode(.inline)
             
