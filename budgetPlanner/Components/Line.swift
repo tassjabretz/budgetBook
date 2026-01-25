@@ -1,9 +1,3 @@
-//
-//  SwiftUIView.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 03.10.25.
-//
 
 import SwiftUI
 

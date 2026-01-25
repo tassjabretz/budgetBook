@@ -17,7 +17,7 @@ struct EmptyView: View {
                 .padding()
                 .onAppear {
                     withAnimation(.easeInOut(duration: 1).repeatCount(2,autoreverses: true)) {
-                       
+                        
                         self.scale = 2
                     }
                 }
@@ -32,14 +32,14 @@ struct EmptyView: View {
             }
             .modifier(ButtonNormal(buttonTitel: ""))
             .font(.title2)
-
-
+            
+            
             Spacer()
         }
-
+        
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-   
+        
     }
 }
 

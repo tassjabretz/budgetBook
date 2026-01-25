@@ -68,32 +68,32 @@ struct Settings: View {
                                 HStack (alignment: .center) {
                                     Text(NSLocalizedString(mode.title, comment: ""))
                                     Image(systemName: mode.icon)
-                                      
+                                    
                                 }
                                 
                                 .tag(mode.rawValue)
-                              
-                               
+                                
+                                
                             }
                             
-                           
+                            
                             
                         }
                         
-                       
-                      
-                       
+                        
+                        
+                        
                         .pickerStyle(.menu)
                         .tint(.secondary)
                         
-                  
+                        
                         
                     }
-                   
-                    .padding(10)
-          
                     
-                   
+                    .padding(10)
+                    
+                    
+                    
                     
                     Divider()
                         .frame(height: 0.3)
@@ -119,17 +119,17 @@ struct Settings: View {
                                 .foregroundStyle(.secondary)
                         }
                         .padding()
-                      
+                        
                         .contentShape(Rectangle())
                         .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.plain)
-                        
-                        Divider()
-                            .frame(height: 0.3)
-                            .overlay(.secondary)
-                 
-                 
+                    
+                    Divider()
+                        .frame(height: 0.3)
+                        .overlay(.secondary)
+                    
+                    
                     NavigationLink(destination: ImpressumView()) {
                         HStack {
                             Text("Impressum")
@@ -156,12 +156,12 @@ struct Settings: View {
                         }
                         .padding()
                     }
-                  
+                    
                     
                     
                 }
                 .modifier(containerBorder())
-               
+                
                 
             }
             
@@ -180,7 +180,7 @@ struct Settings: View {
                                 .foregroundStyle(.secondary)
                         }
                         .padding()
-                       
+                        
                     }
                     
                 }

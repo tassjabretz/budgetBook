@@ -1,14 +1,10 @@
-//
-//  CategoryFunctions.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 18.10.25.
-//
-
 import Foundation
 import SwiftData
 
 final class TransactionFunctions {
+    /**
+     This function delete a selected transaction from the  model
+     */
     
     func deleteTransaction(modelContext: ModelContext, transaction: Transaction,  newCategoryKey: String, completion: @escaping (Error?) -> Void) {
         
@@ -43,6 +39,10 @@ final class TransactionFunctions {
             }
         }
     }
+    
+    /**
+     This function edit a selected transaction from the  model
+     */
     
     func editTransaction(
         modelContext: ModelContext,
@@ -101,6 +101,10 @@ final class TransactionFunctions {
         }
     }
     }
+    
+    /**
+     This function fetch all provided transactions as an array of Transaction
+     */
     func fetchTransactions(modelContext: ModelContext) -> [Transaction]  {
         
         
@@ -119,7 +123,9 @@ final class TransactionFunctions {
    
     }
     
-
+    /**
+     This function add a transaction the  model
+     */
 
     func addTransaction(
         modelContext: ModelContext,
@@ -178,6 +184,9 @@ final class TransactionFunctions {
             }
     }
     
+    /**
+     This function checks if a new transaction is valid before save it to the model
+     */
     func validateTransaction(categoryName: String, transactionTitel: String, description: String, amount: Double) -> Bool {
         
         let areFieldsValid = !categoryName.isEmpty &&

@@ -1,6 +1,6 @@
 import Foundation
 import SwiftData
-import SwiftUI
+
 
 @Model
 final class Transaction: Identifiable {
