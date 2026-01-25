@@ -104,6 +104,9 @@ final class CategoryFunctions {
             Category(categoryName: "investment", iconName: "eurosign",  defaultBudget: 0.0, isOutgoing: false),
             Category(categoryName: "special", iconName: "questionmark",  defaultBudget: 0.0, isOutgoing: false),
             
+            Category(categoryName: "streaming", iconName: "tv.and.mediabox",  defaultBudget: 30, isOutgoing: true),
+            Category(categoryName: "abo", iconName: "calendar.badge.plus",  defaultBudget: 30, isOutgoing: true),
+            
             
             
         ]

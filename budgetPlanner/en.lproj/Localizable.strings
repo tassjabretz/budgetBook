@@ -104,4 +104,6 @@
 "light" ="Light";
 "dark" ="Dark";
 "save_transaction" = "Save transaction";
+"streaming" = "Streaming";
+"abo" = "Abo";
 

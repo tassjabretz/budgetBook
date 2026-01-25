@@ -6,40 +6,41 @@ struct EmptyView: View {
     @Binding var selectedTab: Int
     
     var body: some View {
-        VStack(alignment: .center) {
-            Spacer()
-            Image(systemName: "info.circle")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 80, height: 80)
-                .foregroundColor(.adaptiveBlack)
-                .scaleEffect(scale)
-                .padding()
-                .onAppear {
-                    withAnimation(.easeInOut(duration: 1).repeatCount(2,autoreverses: true)) {
-                        
-                        self.scale = 2
+        ScrollView {
+            VStack(alignment: .center) {
+                Spacer()
+                Image(systemName: "info.circle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 80)
+                    .foregroundColor(.adaptiveBlack)
+                    .scaleEffect(scale)
+                    .padding()
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1).repeatCount(2,autoreverses: true)) {
+                            
+                            self.scale = 2
+                        }
                     }
+                Spacer()
+                Text("no_transactions")
+                    .padding(.vertical, 30)
+                    .foregroundStyle(.adaptiveBlack)
+                    .font(.title2)
+                
+                NavigationLink(destination: AddTransactionView(selectedTab: $selectedTab)) {
+                    Text("add_transaction")
                 }
-            Spacer()
-            Text("no_transactions")
-                .padding(.vertical, 30)
-                .foregroundStyle(.adaptiveBlack)
+                .modifier(ButtonNormal(buttonTitel: ""))
                 .font(.title2)
-            
-            NavigationLink(destination: AddTransactionView(selectedTab: $selectedTab)) {
-                Text("add_transaction")
+                
+                
+                Spacer()
             }
-            .modifier(ButtonNormal(buttonTitel: ""))
-            .font(.title2)
             
-            
-            Spacer()
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        
     }
 }
 
