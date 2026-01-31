@@ -36,7 +36,7 @@ final class TransactionTests: XCTestCase {
         let categoryName = "Sonstiges"
         let title = "Test Kauf"
         let amount = 19.99
-        let type = Transaction.TransactionType.outcome
+        let type = Transaction.TransactionType.expense
         
         
         let testCategory = Category(categoryName: "Drogerie", iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
@@ -71,7 +71,7 @@ final class TransactionTests: XCTestCase {
         let categoryName = "Drogerie"
         let title = "Test Kauf"
         let amount = 19.99
-        let type = Transaction.TransactionType.outcome
+        let type = Transaction.TransactionType.expense
         
         
         let testCategory = Category(categoryName: categoryName, iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
@@ -101,7 +101,7 @@ final class TransactionTests: XCTestCase {
         
        
         XCTAssertEqual(results?.count, 1)
-        XCTAssertEqual(results?.first?.titel, title)
+        XCTAssertEqual(results?.first?.title, title)
         XCTAssertEqual(results?.first?.category?.categoryName, categoryName)
     }
     
@@ -115,7 +115,7 @@ final class TransactionTests: XCTestCase {
             titel: "Miete",
             text: "Monatlich",
             amount: 800.0,
-            type: Transaction.TransactionType.outcome
+            type: Transaction.TransactionType.expense
         )
         
         let expectation = XCTestExpectation(description: "Completion handler called")
@@ -141,7 +141,7 @@ final class TransactionTests: XCTestCase {
             titel: "Miete",
             text: "Monatlich",
             amount: 800.0,
-            type: .outcome
+            type: .expense
         )
         context.insert(transactionToDeleteError)
         try context.save()
@@ -169,7 +169,7 @@ final class TransactionTests: XCTestCase {
             titel: "Miete",
             text: "Monatlich",
             amount: 800.0,
-            type: .outcome
+            type: .expense
         )
         context.insert(transactionToDelete)
         try context.save()
@@ -213,14 +213,14 @@ final class TransactionTests: XCTestCase {
         context.insert(category)
         context.insert(newCategory)
         
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 7.50, type: .outcome, category: category)
+        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 7.50, type: .expense, category: category)
         context.insert(transaction)
         try context.save()
         
         
         let newTitle = "Kino"
         let newAmount = 15.0
-        let newType = Transaction.TransactionType.outcome
+        let newType = Transaction.TransactionType.expense
         
         let expectation = XCTestExpectation(description: "Completion handler called")
         
@@ -240,7 +240,7 @@ final class TransactionTests: XCTestCase {
         
         await fulfillment(of: [expectation], timeout: 2.0)
         
-        XCTAssertEqual(transaction.titel, newTitle)
+        XCTAssertEqual(transaction.title, newTitle)
         XCTAssertEqual(transaction.amount, newAmount)
         XCTAssertEqual(transaction.category?.categoryName, "Freizeit")
         
@@ -253,7 +253,7 @@ final class TransactionTests: XCTestCase {
         try context.save()
         
         
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 7.50, type: .outcome)
+        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 7.50, type: .expense)
         context.insert(transaction)
         
         let expectation = XCTestExpectation(description: "Sollte einen Fehler liefern")
@@ -265,7 +265,7 @@ final class TransactionTests: XCTestCase {
             newTitel: "Kino",
             newDescription: "Abendgestaltung",
             newAmount: 15.0,
-            newType: .outcome
+            newType: .expense
         ) { error in
             XCTAssertNotNil(error, "Der Test sollte fehlschlagen, weil die Kategorie fehlt")
             expectation.fulfill()
@@ -279,7 +279,7 @@ final class TransactionTests: XCTestCase {
         context.insert(categoryOutcome)
         context.insert(categoryIncome)
         
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 10.00, type: .outcome, category: categoryOutcome)
+        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 10.00, type: .expense, category: categoryOutcome)
         
         context.insert(transaction)
         try context.save()
@@ -292,7 +292,7 @@ final class TransactionTests: XCTestCase {
             modelContext: context,
             transaction: transaction,
             newCategoryKey: "Freunde",
-            newTitel: transaction.titel,
+            newTitel: transaction.title,
             newDescription: transaction.text,
             newAmount: newAmount,
             newType: newType
@@ -320,7 +320,7 @@ final class TransactionTests: XCTestCase {
         context.insert(category)
         context.insert(newCategory)
         
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 8.00, type: .outcome, category: category)
+        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 8.00, type: .expense, category: category)
         context.insert(transaction)
         try context.save()
         
@@ -332,7 +332,7 @@ final class TransactionTests: XCTestCase {
             modelContext: context,
             transaction: transaction,
             newCategoryKey: newCategory.categoryName,
-            newTitel: transaction.titel,
+            newTitel: transaction.title,
             newDescription: "Döner",
             newAmount: transaction.amount,
             newType: transaction.type

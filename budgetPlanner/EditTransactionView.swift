@@ -35,7 +35,7 @@ struct EditTransactionView: View {
     init(transaction: Transaction, selectedTab: Binding<Int>) {
         self.transaction = transaction
         self._selectedTab = selectedTab
-        _titel = State(initialValue: transaction.titel)
+        _titel = State(initialValue: transaction.title)
         _descriptionText = State(initialValue: transaction.text)
         _selectedCategoryName = State(initialValue: transaction.category?.categoryName ?? "")
         _selectedTransactionType = State(initialValue: transaction.type)

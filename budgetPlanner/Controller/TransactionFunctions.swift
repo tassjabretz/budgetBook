@@ -58,7 +58,7 @@ final class TransactionFunctions {
         do {
             guard let oldCategory = transaction.category else { return }
             
-            let newIsOutgoing = (newType == .outcome)
+            let newIsOutgoing = (newType == .expense)
             
             
             let categoryDescriptor = FetchDescriptor<Category>(
@@ -82,7 +82,7 @@ final class TransactionFunctions {
             )
             
             
-            transaction.titel = newTitel
+            transaction.title = newTitel
             transaction.text = newDescription
             transaction.amount = newAmount
             transaction.type = newType

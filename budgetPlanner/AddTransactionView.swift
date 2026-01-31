@@ -21,7 +21,7 @@ struct AddTransactionView: View {
     @Environment(\.dismiss) var dismiss
     
     @State var categories: [Category] = []
-    @State private var selectedType: Transaction.TransactionType = .outcome
+    @State private var selectedType: Transaction.TransactionType = .expense
     @State private var selectedCategory = ""
     
     
@@ -95,7 +95,7 @@ struct AddTransactionView: View {
                 }
                 
                 
-                if selectedType == .outcome {
+                if selectedType == .expense {
                     categories = CategoryFunctions().fetchCategoriesOutcome(modelContext: modelContext)
                    selectedCategory = "rent"
                 } else {

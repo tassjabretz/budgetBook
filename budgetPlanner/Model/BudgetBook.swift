@@ -12,12 +12,12 @@ import SwiftData
 final class BudgetBook: Identifiable {
     
     var id = UUID()
-    var titel: String
+    var title: String
     
    
     
     init(titel: String) {
-        self.titel = titel
+        self.title = titel
     }
     
     

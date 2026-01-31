@@ -88,12 +88,12 @@ final class CategoryFunctions {
             Category(categoryName: "repair", iconName: "wrench.adjustable", defaultBudget: 100, isOutgoing: true),
             Category(categoryName: "home", iconName: "sofa", defaultBudget: 80, isOutgoing: true),
             Category(categoryName: "rent", iconName: "house", defaultBudget: 1000, isOutgoing: true),
-            Category(categoryName: "familiy_friends", iconName: "person.2",  defaultBudget: 50, isOutgoing: true),
+            Category(categoryName: "family_friends", iconName: "person.2",  defaultBudget: 50, isOutgoing: true),
             Category(categoryName: "special", iconName: "plus",  defaultBudget: 30.00, isOutgoing: true),
   
             Category(categoryName: "credit", iconName: "eurosign.bank.building", defaultBudget: 200, isOutgoing: true),
             Category(categoryName: "party", iconName: "music.microphone", defaultBudget: 100, isOutgoing: true),
-            Category(categoryName: "familiy_friends", iconName: "person.crop.circle.badge.plus",  defaultBudget: 0.0, isOutgoing: false),
+            Category(categoryName: "family_friends", iconName: "person.crop.circle.badge.plus",  defaultBudget: 0.0, isOutgoing: false),
             Category(categoryName: "salary", iconName: "banknote",  defaultBudget: 0.0, isOutgoing: false),
             Category(categoryName: "investment", iconName: "eurosign",  defaultBudget: 0.0, isOutgoing: false),
             Category(categoryName: "special", iconName: "questionmark",  defaultBudget: 0.0, isOutgoing: false),
@@ -141,7 +141,7 @@ final class CategoryFunctions {
             
             
             
-            if(transaction.type == .outcome)
+            if(transaction.type == .expense)
             {
                 category.currentBudget = category.currentBudget - transaction.amount
                 
@@ -165,7 +165,7 @@ final class CategoryFunctions {
             newType: Transaction.TransactionType
         ) {
             
-            if transaction.type == .outcome {
+            if transaction.type == .expense {
                 oldCategory.currentBudget += transaction.amount
             } else {
                 oldCategory.currentBudget -= transaction.amount
@@ -175,7 +175,7 @@ final class CategoryFunctions {
             oldCategory.currentBudget = min(oldCategory.currentBudget, oldCategory.defaultBudget)
             
             
-            if newType == .outcome {
+            if newType == .expense {
                 newCategory.currentBudget -= newAmount
                 newCategory.currentBudget = min(newCategory.currentBudget, newCategory.defaultBudget)
             } else {
@@ -191,7 +191,7 @@ final class CategoryFunctions {
             transaction: Transaction
         )  {
             
-            if transaction.type == .outcome {
+            if transaction.type == .expense {
                 
                 category.currentBudget += transaction.amount
             } else {
