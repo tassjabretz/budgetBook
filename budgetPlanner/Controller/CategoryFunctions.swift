@@ -143,22 +143,15 @@ final class CategoryFunctions {
      This function save the changes from all categories to the model
      */
     
-    func saveAllCategories(
-        modelContext: ModelContext,
-        completion: @escaping (Error?) -> Void
-    ) {
-        do {
-            if modelContext.hasChanges {
-                try modelContext.save()
-            }
-            completion(nil)
-        } catch {
-            completion(error)
+    func saveAllCategories(modelContext: ModelContext)  throws {
+        if modelContext.hasChanges {
+            try modelContext.save()
         }
     }
-    static func saveAllCategories(modelContext: ModelContext, completion: @escaping (Error?) -> Void) {
-        shared.saveAllCategories(modelContext: modelContext, completion: completion)
+    static func saveAllCategories(   modelContext: ModelContext) throws {
+        try shared.saveAllCategories(modelContext: modelContext)
     }
+    
     
     /**
      This function change the current Budget of a category after add a new transansaction

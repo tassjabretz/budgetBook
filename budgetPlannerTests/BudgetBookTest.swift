@@ -22,7 +22,7 @@ final class BudgetBookTest: XCTestCase {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         container = try! ModelContainer(for: BudgetBook.self, configurations: config)
         context = ModelContext(container)
-        sut = BudgetBookFunctions()
+        sut = BudgetBookFunctions.shared
     }
 
     override func tearDown() {
@@ -38,7 +38,7 @@ final class BudgetBookTest: XCTestCase {
 
         
   
-        let testBudgetBook = BudgetBook(titel: "TestBudgetBook")
+        let testBudgetBook = BudgetBook(title: "TestBudgetBook")
         
         context.insert(testBudgetBook)
         try? context.save()

@@ -22,7 +22,7 @@ final class CategoryTests: XCTestCase {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         container = try! ModelContainer(for: Category.self, configurations: config)
         context = ModelContext(container)
-        sut = CategoryFunctions()
+        sut = CategoryFunctions.shared
     }
 
     override func tearDown() {
@@ -33,7 +33,7 @@ final class CategoryTests: XCTestCase {
     }
     
     
-    func testGetAllCategories() {
+    func testGetAllCategories() async throws {
         let testCategory = Category(categoryName: "Drogerie", iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
         let testCategory2 = Category(categoryName: "Gehalt", iconName: "cart", defaultBudget: 100.0, isOutgoing: false)
         let testCategory3 = Category(categoryName: "Miete", iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
@@ -41,23 +41,18 @@ final class CategoryTests: XCTestCase {
         context.insert(testCategory)
         context.insert(testCategory2)
         context.insert(testCategory3)
-        try? context.save()
+        try context.save()
 
         
         let categories = sut.fetchCategories(modelContext: context)
         
         
         XCTAssertEqual(categories.count, 3)
-        
-        context.delete(testCategory)
-        context.delete(testCategory2)
-        context.delete(testCategory3)
-        
-        try? context.save()
+    
 
     }
     
-    func testGetIncomeCategories() {
+    func testGetIncomeCategories() async throws {
   
         let testCategory = Category(categoryName: "Drogerie", iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
         let testCategory2 = Category(categoryName: "Gehalt", iconName: "cart", defaultBudget: 100.0, isOutgoing: false)
@@ -66,7 +61,7 @@ final class CategoryTests: XCTestCase {
         context.insert(testCategory)
         context.insert(testCategory2)
         context.insert(testCategory3)
-        try? context.save()
+        try context.save()
 
         let categories = sut.fetchCategoriesIncome(modelContext: context)
         
@@ -75,7 +70,7 @@ final class CategoryTests: XCTestCase {
      
     }
     
-    func testGetOutcomeCategories() {
+    func testGetOutcomeCategories() async throws {
   
 
         
@@ -87,7 +82,7 @@ final class CategoryTests: XCTestCase {
         context.insert(testCategory)
         context.insert(testCategory2)
         context.insert(testCategory3)
-        try? context.save()
+        try context.save()
 
         let categories = sut.fetchCategoriesOutcome(modelContext: context)
         
@@ -96,20 +91,17 @@ final class CategoryTests: XCTestCase {
   
     }
     
-    func testEditBudget() {
+    func testEditBudget() async throws {
         
   
         let testCategory = Category(categoryName: "Drogerie", iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
         
         context.insert(testCategory)
-        try? context.save()
+        try context.save()
         
         testCategory.defaultBudget = 20.00
         
-        sut.saveAllCategories(modelContext: context) { error in
-            XCTAssertNil(error, "Es sollte kein Fehler beim ändern des Budgets auftreten")
-            
-        }
+        try await sut.saveAllCategories(modelContext: context)
      
         
         XCTAssertEqual(testCategory.defaultBudget, 20.00)
@@ -118,20 +110,20 @@ final class CategoryTests: XCTestCase {
     }
     
     
-    func testNewBudgetAfterAddTransactionOutcome() {
+    func testNewBudgetAfterAddTransactionOutcome() async throws{
         
   
         let testCategory = Category(categoryName: "Drogerie", iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
         
         let transaction = Transaction(
-            titel: "Make up",
+            title: "Make up",
             text: "Rosmann",
             amount: 30,
             type: .expense
         )
         context.insert(transaction)
         context.insert(testCategory)
-        try? context.save()
+        try context.save()
         
 
        sut.setNewBudgetAfterNewTransaction(modelContext: context, category: testCategory, transaction: transaction)
@@ -147,7 +139,7 @@ final class CategoryTests: XCTestCase {
         let testCategory = Category(categoryName: "Gehalt", iconName: "cart", defaultBudget: 20, isOutgoing: false)
         
         let transaction = Transaction(
-            titel: "gehalt",
+            title: "gehalt",
             text: "testfirma",
             amount: 3000.00,
             type: .income
@@ -163,13 +155,13 @@ final class CategoryTests: XCTestCase {
        
     }
     
-    func testNewBudgetAfterAddTransactionNegative() throws {
+    func testNewBudgetAfterAddTransactionNegative()  throws {
         
   
         let testCategory = Category(categoryName: "Internet", iconName: "cart", defaultBudget: 30, isOutgoing: true)
         
         let transaction = Transaction(
-            titel: "negativ",
+            title: "negativ",
             text: "testnegativ",
             amount: 50,
             type: .expense
@@ -187,7 +179,7 @@ final class CategoryTests: XCTestCase {
     }
 
     
-    func testAddBudgetAfterChangeTransaction() throws {
+    func testAddBudgetAfterChangeTransaction()  throws {
 
         let defaultBudget = 100.0
         let testCategory = Category(
@@ -199,7 +191,7 @@ final class CategoryTests: XCTestCase {
         testCategory.currentBudget = 100.0
         
         let transaction = Transaction(
-            titel: "Make up",
+            title: "Make up",
             text: "Rosmann",
             amount: 50,
             type: .expense
@@ -229,7 +221,7 @@ final class CategoryTests: XCTestCase {
     
     
     
-    func testAddBudgetAfterChangeCategory() throws {
+    func testAddBudgetAfterChangeCategory()  throws {
 
         let defaultBudget = 100.0
         let testCategory = Category(
@@ -250,7 +242,7 @@ final class CategoryTests: XCTestCase {
         testCategory2.currentBudget = 70.0
         
         let transaction = Transaction(
-            titel: "Make up",
+            title: "Make up",
             text: "Rosmann",
             amount: 50,
             type: .expense
@@ -290,7 +282,7 @@ final class CategoryTests: XCTestCase {
         testCategory.currentBudget = 100.0
         
         let transaction = Transaction(
-            titel: "Make up",
+            title: "Make up",
             text: "Rosmann",
             amount: 50,
             type: .expense
@@ -329,7 +321,7 @@ final class CategoryTests: XCTestCase {
         testCategory.currentBudget = 100.0
         
         let transaction = Transaction(
-            titel: "Make up",
+            title: "Make up",
             text: "Rosmann",
             amount: 50,
             type: .expense
@@ -368,13 +360,13 @@ final class CategoryTests: XCTestCase {
        
         
         let transaction = Transaction(
-            titel: "Gehalt",
+            title: "Gehalt",
             text: "Testfirma",
             amount: 2000.00,
             type: .income
         )
         let transaction2 = Transaction(
-            titel: "Gehalt",
+            title: "Gehalt",
             text: "Testfirma",
             amount: 2000.00,
             type: .income
@@ -406,13 +398,13 @@ final class CategoryTests: XCTestCase {
        
         
         let transaction = Transaction(
-            titel: "internet",
+            title: "internet",
             text: "kosten",
             amount: 50.00,
             type: .expense
         )
         let transaction2 = Transaction(
-            titel: "Gehalt",
+            title: "Gehalt",
             text: "Testfirma",
             amount: 30.00,
             type: .expense

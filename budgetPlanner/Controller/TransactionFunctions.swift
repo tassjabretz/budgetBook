@@ -4,7 +4,7 @@ import SwiftData
 final class TransactionFunctions {
     
     static let shared = TransactionFunctions()
-    private init() {}
+    private  init() {}
     
     
     /**

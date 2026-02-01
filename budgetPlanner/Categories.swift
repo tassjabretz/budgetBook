@@ -139,8 +139,15 @@ struct Categories: View {
     }
 
     func saveBudget() {
-        CategoryFunctions.saveAllCategories(modelContext: modelContext) { error in
-            handleCompletion(error: error, successKey: "budget_updated_success")
+        Task {
+            do {
+                try CategoryFunctions.saveAllCategories(modelContext: modelContext)
+                
+                handleCompletion(error: nil, successKey: "budget_updated_success")
+            } catch {
+               
+                handleCompletion(error: error, successKey: "")
+            }
         }
     }
     

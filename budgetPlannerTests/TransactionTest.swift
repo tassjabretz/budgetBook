@@ -22,7 +22,7 @@ final class TransactionTests: XCTestCase {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         container = try! ModelContainer(for: Transaction.self, Category.self, configurations: config)
         context = ModelContext(container)
-        sut = TransactionFunctions()
+        sut = TransactionFunctions.shared
     }
     
     override func tearDown() {
@@ -31,39 +31,31 @@ final class TransactionTests: XCTestCase {
         context = nil
         super.tearDown()
     }
-    func testAddTransaction_ShouldIncreaseCount_error() async throws {
-        
-        let categoryName = "Sonstiges"
-        let title = "Test Kauf"
-        let amount = 19.99
-        let type = Transaction.TransactionType.expense
-        
+    
+    func testAddTransaction_WithMissingCategory_ShouldThrowError() async throws {
         
         let testCategory = Category(categoryName: "Drogerie", iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
         context.insert(testCategory)
-        try? context.save()
+        try context.save()
+
         
-        
-        
-        sut.addTransaction(
-            modelContext: context,
-            categoryName: categoryName,
-            transactionTitel: title,
-            description: "Test Beschreibung",
-            amount: amount,
-            transactionType: type
-        ) { error in
-            XCTAssertNotNil(error, "Es sollte kein Fehler auftreten")
+        do {
+            try await sut.addTransaction(
+                modelContext: context,
+                categoryName: "Sonstiges", // Existiert nicht!
+                transactionTitel: "Test Kauf",
+                description: "Test Beschreibung",
+                amount: 19.99,
+                transactionType: .expense
+            )
+            XCTFail("Die Funktion hätte einen Fehler werfen müssen, da die Kategorie fehlt.")
+        } catch {
+            let descriptor = FetchDescriptor<Transaction>()
+            let results = try context.fetch(descriptor)
             
+            
+            XCTAssertEqual(results.count, 0, "Es darf keine Transaktion gespeichert werden, wenn die Kategorie fehlt.")
         }
-        
-        
-        
-        
-        let descriptor = FetchDescriptor<Transaction>()
-        let results = try? context.fetch(descriptor)
-        
-        XCTAssertEqual(results?.count, 0)
     }
     
     func testAddTransaction_ShouldIncreaseCount() async throws {
@@ -78,31 +70,27 @@ final class TransactionTests: XCTestCase {
         context.insert(testCategory)
         try context.save()
         
-        let expectation = XCTestExpectation(description: "Completion handler called")
         
-        sut.addTransaction(
+        
+        try await sut.addTransaction(
             modelContext: context,
             categoryName: categoryName,
             transactionTitel: title,
             description: "Test Beschreibung",
             amount: amount,
             transactionType: type
-        ) { error in
-            XCTAssertNil(error, "Es sollte kein Fehler auftreten")
-            expectation.fulfill( )
-            
-        }
+        )
         
-        await fulfillment(of: [expectation], timeout: 2.0)
+        
         
         
         let descriptor = FetchDescriptor<Transaction>()
-        let results = try? context.fetch(descriptor)
+        let results = try context.fetch(descriptor)
         
-       
-        XCTAssertEqual(results?.count, 1)
-        XCTAssertEqual(results?.first?.title, title)
-        XCTAssertEqual(results?.first?.category?.categoryName, categoryName)
+        
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual(results.first?.title, title)
+        XCTAssertEqual(results.first?.category?.categoryName, categoryName)
     }
     
     func testDeleteTransaction() async throws{
@@ -112,61 +100,52 @@ final class TransactionTests: XCTestCase {
         let testCategory = Category(categoryName: categoryName, iconName: "cart", defaultBudget: 100.0, isOutgoing: true)
         
         let transactionToDelete = Transaction(
-            titel: "Miete",
+            title: "Miete",
             text: "Monatlich",
             amount: 800.0,
             type: Transaction.TransactionType.expense
         )
         
-        let expectation = XCTestExpectation(description: "Completion handler called")
+        
         
         context.insert(testCategory)
         context.insert(transactionToDelete)
         try context.save()
         
-        sut.deleteTransaction(modelContext: context, transaction: transactionToDelete, newCategoryKey: "Drogerie") { error in
-            XCTAssertNil(error, "Es sollte kein Fehler beim Löschen auftreten")
-            expectation.fulfill()
-        }
         
-        await fulfillment(of: [expectation], timeout: 2.0)
+        try await sut.deleteTransaction(modelContext: context, transaction: transactionToDelete, newCategoryKey: "Drogerie")
         
         let results = try context.fetch(FetchDescriptor<Transaction>())
         XCTAssertEqual(results.count, 0, "Die Transaktion sollte erfolgreich gelöscht worden sein.")
     }
     
-    func testDeleteTransaction_fail() async throws{
+    func testDeleteTransaction_WhenAlreadyDeleted_ShouldThrowError() async throws {
         
-        let transactionToDeleteError = Transaction(
-            titel: "Miete",
-            text: "Monatlich",
-            amount: 800.0,
-            type: .expense
-        )
-        context.insert(transactionToDeleteError)
+        let transaction = Transaction(title: "Miete", text: "Monatlich", amount: 800.0, type: .expense)
+        context.insert(transaction)
         try context.save()
         
-        context.delete(transactionToDeleteError)
+       
+        context.delete(transaction)
         try context.save()
         
         
-        let expectation = expectation(description: "Sollte einen Fehler im Callback liefern")
-        
-        
-        sut.deleteTransaction(modelContext: context, transaction: transactionToDeleteError, newCategoryKey: "Test") { error in
-            
-            XCTAssertNotNil(error, "Es sollte ein Fehler auftreten, wenn die Transaktion nicht existiert.")
-            
-            
-            expectation.fulfill()
+        do {
+            try await sut.deleteTransaction(modelContext: context, transaction: transaction, newCategoryKey: "Test")
+            XCTFail("Die Funktion hätte einen Fehler werfen müssen, da die Transaktion bereits gelöscht war.")
+        } catch {
+           
+            XCTAssertNotNil(error)
+            print("Erwarteter Fehler gefangen: \(error.localizedDescription)")
         }
-        await fulfillment(of: [expectation], timeout: 2.0)
     }
+    
+    
     
     func testFetchTransactions() async throws {
         
         let transactionToDelete = Transaction(
-            titel: "Miete",
+            title: "Miete",
             text: "Monatlich",
             amount: 800.0,
             type: .expense
@@ -213,7 +192,7 @@ final class TransactionTests: XCTestCase {
         context.insert(category)
         context.insert(newCategory)
         
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 7.50, type: .expense, category: category)
+        let transaction = Transaction(title: "Döner", text: "Mittagessen", amount: 7.50, type: .expense, category: category)
         context.insert(transaction)
         try context.save()
         
@@ -222,10 +201,9 @@ final class TransactionTests: XCTestCase {
         let newAmount = 15.0
         let newType = Transaction.TransactionType.expense
         
-        let expectation = XCTestExpectation(description: "Completion handler called")
+       
         
-        
-        sut.editTransaction(
+        try await sut.editTransaction(
             modelContext: context,
             transaction: transaction,
             newCategoryKey: newCategory.categoryName,
@@ -233,12 +211,9 @@ final class TransactionTests: XCTestCase {
             newDescription: "Abendgestaltung",
             newAmount: newAmount,
             newType: newType
-        ) { error in
-            XCTAssertNil(error, "Es sollte kein Fehler beim Editieren auftreten")
-            expectation.fulfill()
-        }
+        )
         
-        await fulfillment(of: [expectation], timeout: 2.0)
+       
         
         XCTAssertEqual(transaction.title, newTitle)
         XCTAssertEqual(transaction.amount, newAmount)
@@ -246,32 +221,37 @@ final class TransactionTests: XCTestCase {
         
     }
     
-    func testEditTransaction_fail() async throws {
+    func testEditTransaction_WhenCategoryMissing_ShouldThrowErrorAndNotChangeData() async throws {
+        // 1. Arrange: Initiale Daten erstellen
+        let initialCategory = Category(categoryName: "Essen", iconName: "fork.knife", defaultBudget: 100.0, isOutgoing: true)
+        context.insert(initialCategory)
         
-        let category = Category(categoryName: "Essen", iconName: "fork.knife", defaultBudget: 100.0, isOutgoing: true)
-        context.insert(category)
+        let transaction = Transaction(title: "Döner", text: "Mittagessen", amount: 7.50, type: .expense)
+        transaction.category = initialCategory
+        context.insert(transaction)
         try context.save()
         
-        
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 7.50, type: .expense)
-        context.insert(transaction)
-        
-        let expectation = XCTestExpectation(description: "Sollte einen Fehler liefern")
-        
-            sut.editTransaction(
-            modelContext: context,
-            transaction: transaction,
-            newCategoryKey: "NichtExistierendeKategorie",
-            newTitel: "Kino",
-            newDescription: "Abendgestaltung",
-            newAmount: 15.0,
-            newType: .expense
-        ) { error in
-            XCTAssertNotNil(error, "Der Test sollte fehlschlagen, weil die Kategorie fehlt")
-            expectation.fulfill()
+        // 2. Act: Versuch, auf eine nicht existierende Kategorie zu ändern
+        do {
+            try await sut.editTransaction(
+                modelContext: context,
+                transaction: transaction,
+                newCategoryKey: "NichtExistierendeKategorie", // Dieser Key existiert nicht
+                newTitel: "Kino",
+                newDescription: "Abendgestaltung",
+                newAmount: 15.0,
+                newType: .expense
+            )
+            XCTFail("Die Funktion hätte werfen müssen, da die neue Kategorie fehlt.")
+        } catch {
+            // 3. Assert: Prüfen, ob die Daten unverändert geblieben sind (Rollback-Zustand)
+            // Wir holen die Transaktion frisch aus dem Context
+            XCTAssertEqual(transaction.title, "Döner", "Der Titel sollte nicht geändert worden sein.")
+            XCTAssertEqual(transaction.amount, 7.50, "Der Betrag sollte nicht geändert worden sein.")
+            XCTAssertEqual(transaction.category?.categoryName, "Essen", "Die Kategorie sollte weiterhin 'Essen' sein.")
         }
-        
     }
+    
     func testEditTransaction_changeTransactionType() async throws {
         
         let categoryOutcome = Category(categoryName: "Essen", iconName: "fork.knife", defaultBudget: 100.0, isOutgoing: true)
@@ -279,16 +259,16 @@ final class TransactionTests: XCTestCase {
         context.insert(categoryOutcome)
         context.insert(categoryIncome)
         
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 10.00, type: .expense, category: categoryOutcome)
+        let transaction = Transaction(title: "Döner", text: "Mittagessen", amount: 10.00, type: .expense, category: categoryOutcome)
         
         context.insert(transaction)
         try context.save()
         
         let newAmount = 15.0
         let newType = Transaction.TransactionType.income
-        let expectation = XCTestExpectation(description: "Completion handler called")
-     
-            sut.editTransaction(
+   
+        
+        try await sut.editTransaction(
             modelContext: context,
             transaction: transaction,
             newCategoryKey: "Freunde",
@@ -296,22 +276,18 @@ final class TransactionTests: XCTestCase {
             newDescription: transaction.text,
             newAmount: newAmount,
             newType: newType
-        ) { error in
-            XCTAssertNil(error, "Es sollte kein Fehler beim Editieren auftreten")
-            expectation.fulfill()
-            
-        }
+        )
         
-        await fulfillment(of: [expectation], timeout: 5.0)
+        
         
         
         XCTAssertEqual(categoryOutcome.currentBudget, 100.0)
         XCTAssertEqual(categoryIncome.currentBudget, 15.0)
         
-
+        
     }
     func testEditTransaction_ChangeCategory() async throws {
-   
+        
         let category = Category(categoryName: "Essen", iconName: "fork.knife", defaultBudget: 100.0, isOutgoing: true)
         let newCategory = Category(categoryName: "Freizeit", iconName: "star", defaultBudget: 50.0, isOutgoing: true)
         
@@ -320,15 +296,15 @@ final class TransactionTests: XCTestCase {
         context.insert(category)
         context.insert(newCategory)
         
-        let transaction = Transaction(titel: "Döner", text: "Mittagessen", amount: 8.00, type: .expense, category: category)
+        let transaction = Transaction(title: "Döner", text: "Mittagessen", amount: 8.00, type: .expense, category: category)
         context.insert(transaction)
         try context.save()
         
-     
-        let expectation = XCTestExpectation(description: "Edit transaction completion")
-
-     
-        sut.editTransaction(
+        
+        
+        
+        
+        try await sut.editTransaction(
             modelContext: context,
             transaction: transaction,
             newCategoryKey: newCategory.categoryName,
@@ -336,16 +312,14 @@ final class TransactionTests: XCTestCase {
             newDescription: "Döner",
             newAmount: transaction.amount,
             newType: transaction.type
-        ) { error in
-            XCTAssertNil(error, "Es sollte kein Fehler beim Editieren auftreten")
-            expectation.fulfill()
-        }
+        )
         
-      
-        await fulfillment(of: [expectation], timeout: 2.0)
-
-      
+        
+        
+        
+        
         XCTAssertEqual(category.currentBudget, 100.0, "Das Budget der alten Kategorie wurde nicht zurückgesetzt")
         XCTAssertEqual(newCategory.currentBudget, 42.0, "Das Budget der neuen Kategorie wurde nicht korrekt berechnet")
     }
 }
+
