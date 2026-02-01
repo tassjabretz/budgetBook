@@ -56,7 +56,7 @@ struct Categories: View {
             do {
                 let initialCheck = try modelContext.fetch(FetchDescriptor<Category>())
                 if initialCheck.isEmpty {
-                    CategoryFunctions().applyCategories(modelContext: modelContext)
+                    CategoryFunctions.applyCategories(modelContext: modelContext)
                 }
             } catch {
                 print("Initial data check failed: \(error)")
@@ -137,18 +137,9 @@ struct Categories: View {
             
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     func saveBudget() {
-        CategoryFunctions().saveAllCategories(modelContext: modelContext) { error in
+        CategoryFunctions.saveAllCategories(modelContext: modelContext) { error in
             handleCompletion(error: error, successKey: "budget_updated_success")
         }
     }

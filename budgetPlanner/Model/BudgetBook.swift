@@ -10,14 +10,9 @@ import SwiftData
 
 @Model
 final class BudgetBook: Identifiable {
-    
-    var id = UUID()
-    var titel: String
-    
-   
-    
-    init(titel: String) {
-        self.titel = titel
+    var title: String
+    init(title: String) {
+        self.title = title
     }
     
     

@@ -2,42 +2,39 @@ import Foundation
 import SwiftData
 
 final class TransactionFunctions {
+    
+    static let shared = TransactionFunctions()
+    private init() {}
+    
+    
     /**
      This function delete a selected transaction from the  model
      */
     
-    func deleteTransaction(modelContext: ModelContext, transaction: Transaction,  newCategoryKey: String, completion: @escaping (Error?) -> Void) {
+    func deleteTransaction(modelContext: ModelContext, transaction: Transaction, newCategoryKey: String) async throws {
         
-        Task {
-            guard transaction.modelContext != nil else {
-                let error = NSError(
-                    domain: "TransactionError",
-                    code: 404,
-                    userInfo: [NSLocalizedDescriptionKey: "Transaktion existiert nicht mehr."]
-                )
-                completion(error)
-                return
-            }
-            
-            do {
-                let categoryDescriptor = FetchDescriptor<Category>(
-                    predicate: #Predicate { $0.categoryName == newCategoryKey }
-                )
-                
-                guard let newCategory = try modelContext.fetch(categoryDescriptor).first else {
-                    throw NSError(domain: "TransactionEditError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Kategorie nicht gefunden."])
-                }
-                
-                CategoryFunctions().undoBudgetImpactBeforeDeletion(modelContext: modelContext, category: newCategory, transaction: transaction )
-                modelContext.delete(transaction)
-                try modelContext.save()
-                
-                
-                completion(nil)
-            } catch {
-                completion(error)
-            }
+        guard transaction.modelContext != nil else {
+            throw NSError(
+                domain: "TransactionError",
+                code: 404,
+                userInfo: [NSLocalizedDescriptionKey: "Transaktion existiert nicht mehr."]
+            )
         }
+
+        let categoryDescriptor = FetchDescriptor<Category>(
+            predicate: #Predicate { $0.categoryName == newCategoryKey }
+        )
+
+        guard let newCategory = try modelContext.fetch(categoryDescriptor).first else {
+            throw NSError(domain: "TransactionEditError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Kategorie nicht gefunden."])
+        }
+
+        CategoryFunctions.undoBudgetImpactBeforeDeletion(modelContext: modelContext, category: newCategory, transaction: transaction )
+        modelContext.delete(transaction)
+        try modelContext.save()
+    }
+    static func deleteTransaction(modelContext: ModelContext, transaction: Transaction, newCategoryKey: String) async throws {
+        try await shared.deleteTransaction(modelContext: modelContext, transaction: transaction, newCategoryKey: newCategoryKey)
     }
     
     /**
@@ -51,55 +48,55 @@ final class TransactionFunctions {
         newTitel: String,
         newDescription: String,
         newAmount: Double,
-        newType: Transaction.TransactionType,
-        completion: @escaping (Error?) -> Void
-    ) {
-        Task {
-        do {
-            guard let oldCategory = transaction.category else { return }
-            
-            let newIsOutgoing = (newType == .outcome)
-            
-            
-            let categoryDescriptor = FetchDescriptor<Category>(
-                predicate: #Predicate { $0.categoryName == newCategoryKey && $0.isOutgoing == newIsOutgoing }
-            )
-            
-            guard let newCategory = try modelContext.fetch(categoryDescriptor).first else {
-                throw NSError(domain: "TransactionEditError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Kategorie nicht gefunden."])
-            }
-            
-            
-            
-            
-            CategoryFunctions().setNewBudgetAfterEditTransaction(
-                modelContext: modelContext,
-                oldCategory: oldCategory,
-                transaction: transaction,
-                newCategory: newCategory,
-                newAmount: newAmount,
-                newType: newType
-            )
-            
-            
-            transaction.titel = newTitel
-            transaction.text = newDescription
-            transaction.amount = newAmount
-            transaction.type = newType
-            transaction.category = newCategory
-            
-            
-            try modelContext.save()
-            
-            DispatchQueue.main.async {
-                completion(nil)
-            }
-            
-            
-        } catch {
-            completion(error)
+        newType: Transaction.TransactionType
+    ) async throws {
+        guard let oldCategory = transaction.category else {
+            throw NSError(domain: "TransactionEditError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Alte Kategorie fehlt."])
         }
+
+        let newIsOutgoing = (newType == .expense)
+
+        let categoryDescriptor = FetchDescriptor<Category>(
+            predicate: #Predicate { $0.categoryName == newCategoryKey && $0.isOutgoing == newIsOutgoing }
+        )
+
+        guard let newCategory = try modelContext.fetch(categoryDescriptor).first else {
+            throw NSError(domain: "TransactionEditError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Kategorie nicht gefunden."])
+        }
+
+        CategoryFunctions.setNewBudgetAfterEditTransaction(
+            modelContext: modelContext,
+            oldCategory: oldCategory,
+            transaction: transaction,
+            newCategory: newCategory,
+            newAmount: newAmount,
+            newType: newType
+        )
+
+        transaction.title = newTitel
+        transaction.text = newDescription
+        transaction.amount = newAmount
+        transaction.type = newType
+        transaction.category = newCategory
+
+        try modelContext.save()
     }
+    
+    static func editTransaction(
+    modelContext: ModelContext,
+    transaction: Transaction,
+    newCategoryKey: String,
+    newTitel: String,
+    newDescription: String,
+    newAmount: Double,
+    newType: Transaction.TransactionType) async throws {
+        try await shared.editTransaction(  modelContext: modelContext,
+                                           transaction: transaction,
+                                           newCategoryKey: newCategoryKey,
+                                           newTitel: newTitel,
+                                           newDescription: newDescription,
+                                           newAmount: newAmount,
+                                           newType: newType)
     }
     
     /**
@@ -123,6 +120,13 @@ final class TransactionFunctions {
    
     }
     
+    static func fetchTransactions(
+    modelContext: ModelContext)  -> [Transaction] {
+      shared.fetchTransactions( modelContext: modelContext)
+                                           
+    }
+    
+    
     /**
      This function add a transaction the  model
      */
@@ -133,55 +137,46 @@ final class TransactionFunctions {
         transactionTitel: String,
         description: String,
         amount: Double,
-        transactionType: Transaction.TransactionType,
-        completion: @escaping (Error?) -> Void) {
-            
-            Task {
-                
-                
-                do {
-                    let nameToSearch = categoryName
-                    
-                    let descriptorCategory = FetchDescriptor<Category>(
-                        predicate: #Predicate { $0.categoryName == nameToSearch }
-                    )
-                    
-                    guard let category = try modelContext.fetch(descriptorCategory).first else {
-                        completion(NSError(domain: "Test", code: 404, userInfo: [NSLocalizedDescriptionKey: "Category not found"]))
-                        return
-                    }
-                    
-                    let transaction = Transaction(
-                        titel: transactionTitel,
-                        text: description,
-                        amount: amount,
-                        type: transactionType,
-                        
-                    )
-                    
-                    modelContext.insert(transaction)
-                    transaction.category = category
-                    
-                    CategoryFunctions().setNewBudgetAfterNewTransaction(
-                        modelContext: modelContext,
-                        category: category,
-                        transaction: transaction
-                    )
-                    
-                    
-                    try modelContext.save()
-                    DispatchQueue.main.async {
-                        completion(nil)
-                    }
-                    
-                    
-                    
-                } catch {
-                    DispatchQueue.main.async {
-                        completion(error)
-                    }
-                }
-            }
+        transactionType: Transaction.TransactionType
+    ) async throws {
+        let nameToSearch = categoryName
+
+        let descriptorCategory = FetchDescriptor<Category>(
+            predicate: #Predicate { $0.categoryName == nameToSearch }
+        )
+
+        guard let category = try modelContext.fetch(descriptorCategory).first else {
+            throw NSError(domain: "Test", code: 404, userInfo: [NSLocalizedDescriptionKey: "Category not found"])
+        }
+
+        let transaction = Transaction(
+            title: transactionTitel,
+            text: description,
+            amount: amount,
+            type: transactionType,
+        )
+
+        modelContext.insert(transaction)
+        transaction.category = category
+
+        CategoryFunctions.setNewBudgetAfterNewTransaction(
+            modelContext: modelContext,
+            category: category,
+            transaction: transaction
+        )
+
+        try modelContext.save()
+    }
+    
+    static func addTransaction(
+        modelContext: ModelContext,
+        categoryName: String,
+        transactionTitel: String,
+        description: String,
+        amount: Double,
+        transactionType: Transaction.TransactionType) async throws {
+           try await shared.addTransaction(modelContext: modelContext, categoryName: categoryName, transactionTitel: transactionTitel, description: description, amount: amount, transactionType: transactionType)
+                                           
     }
     
     /**
@@ -196,4 +191,11 @@ final class TransactionFunctions {
         
         return areFieldsValid 
     }
+    static func validateTransaction(
+        categoryName: String, transactionTitel: String, description: String, amount: Double) -> Bool {
+          shared.validateTransaction(categoryName: categoryName, transactionTitel: transactionTitel, description: description, amount: amount)
+                                           
+    }
+
 }
+

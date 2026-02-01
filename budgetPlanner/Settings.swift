@@ -228,9 +228,10 @@ struct Settings: View {
 
 
 #Preview {
+    @Previewable @State var selectedTab = 0
     NavigationStack {
         Settings(
-            selectedTab: .constant(0),
+            selectedTab: $selectedTab,
             
         )
         .environment(\EnvironmentValues.locale, Locale(identifier: "de"))

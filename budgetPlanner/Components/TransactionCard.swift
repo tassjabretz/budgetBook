@@ -16,7 +16,7 @@ struct TransactionCard: View {
             
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(transaction.titel).font(.headline).foregroundStyle(Color.gray)
+                Text(transaction.title).font(.headline).foregroundStyle(Color.gray)
                 Text(transaction.text).font(.subheadline).foregroundColor(.secondary)
                 Text(NSLocalizedString(categoryKey, comment: "Category display name"))
                     .font(.caption2).foregroundColor(.secondary)
@@ -62,16 +62,16 @@ struct TransactionCard: View {
     
     
     let sampleTransaction = Transaction(
-        titel: "Tassja",
+        title: "Tassja",
         text: "Test",
         amount: 2.0,
-        type: .outcome,
+        type: .expense,
         category: sampleCategory
     )
     
     
     let sampleTransaction2 = Transaction(
-        titel: "Tassja",
+        title: "Tassja",
         text: "Test",
         amount: 3000.0,
         type: .income,

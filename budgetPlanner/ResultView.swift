@@ -49,5 +49,7 @@ struct ResultView: View {
 }
 
 #Preview {
-    ResultView(message: "Error", text: "Hello", selectedTab: .constant(0))
+    @Previewable @State var selectedTab = 0
+    
+    ResultView(message: "Error", text: "Hello", selectedTab: $selectedTab)
 }

@@ -34,7 +34,7 @@
 "categories_outcome" = "Kategorien Ausgaben";
 "categories_income" = "Kategorien Einnahmen";
 "salary" = "Gehalt";
-"familiy_friends" = "Freunde";
+"family_friends" = "Freunde";
 "amount" = "Betrag";
 "transaction_type" = "Transaktionsart";
 "selected_budgetbook" = "Ausgewähltes Haushaltsbuch";

@@ -1,9 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct EmptyView: View {
     @State var scale: CGFloat = 1.0
     
     @Binding var selectedTab: Int
+
     
     var body: some View {
         ScrollView {
@@ -45,5 +47,14 @@ struct EmptyView: View {
 }
 
 #Preview {
-    EmptyView(selectedTab:.constant(0))
+    
+       
+        
+        @Previewable @State var selectedTab = 0
+
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try! ModelContainer(for: Transaction.self, Category.self, configurations: config)
+    
+ 
+    EmptyView(selectedTab: $selectedTab)
 }

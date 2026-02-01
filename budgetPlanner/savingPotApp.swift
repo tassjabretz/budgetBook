@@ -12,6 +12,8 @@ struct savingPotApp: App {
     
     @State private var selectedTab: Int = 0
     
+
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Category.self,

@@ -6,6 +6,7 @@ struct ContentView: View {
     
     
     @State private var selectedTab = 0
+    @State private var draftTransaction = Transaction(title: "", text: "", amount: 0, type: .expense)
     
     @Environment(\.modelContext) var modelContext
     
@@ -62,7 +63,7 @@ struct ContentView: View {
         .onAppear {
             
             
-            CategoryFunctions().checkAndResetMonthlyBudget(modelContext: modelContext)
+            CategoryFunctions.checkAndResetMonthlyBudget(modelContext: modelContext)
             
         }
         
@@ -84,7 +85,8 @@ struct ContentView: View {
 }
 
 #Preview {
-    Home(selectedTab:.constant(0))
+    @Previewable @State var selectedTab = 0
+    Home(selectedTab: $selectedTab)
 }
 
 /*

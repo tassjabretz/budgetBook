@@ -5,6 +5,7 @@ struct Home: View {
     @State var transactions: [Transaction] = []
     @State var budgetBooks: [BudgetBook] = []
     @Binding var selectedTab: Int
+
     @State private var isLoading = true
     
     
@@ -51,8 +52,8 @@ struct Home: View {
             }
             
             .task {
-                let fetchedTransactions = TransactionFunctions().fetchTransactions(modelContext: modelContext)
-                try? await Task.sleep(nanoseconds: 200_000_000)
+                let fetchedTransactions = TransactionFunctions.fetchTransactions(modelContext: modelContext)
+                
                 
                 withAnimation(.easeInOut) {
                     self.transactions = fetchedTransactions
@@ -80,7 +81,7 @@ struct Home: View {
         
         List {
             ForEach(transactions) { transaction in // Nutze direkt das Objekt statt Index
-                NavigationLink(destination: EditTransactionView(transaction: transaction, selectedTab: $selectedTab)) {
+                NavigationLink(destination: EditTransactionView(selectedTab: $selectedTab, transaction: transaction)) {
                     TransactionCard(transaction: transaction)
                 }
                 // .listRowInsets(EdgeInsets()) // 1. Entfernt das innere Padding der Zeile
@@ -104,23 +105,39 @@ struct Home: View {
     
     
     func deleteTransaction(transaction: Transaction) {
-        TransactionFunctions().deleteTransaction(
-            modelContext: modelContext,
-            transaction: transaction,
-            newCategoryKey: transaction.category?.categoryName ?? ""
-        ) { error in
-            handleCompletion(
-                error: error,
-                successKey: "transaction_delete_success",
-                message: $message,
-                messageTitle: $messageTitle,
-                showResultView: $showResultView,
-                showToast: $showToast,
-                dismiss: dismiss
-            )
-            {
-                self.transactions.removeAll { $0.id == transaction.id }
-            }
+        
+        Task {
+            do {
+                try await TransactionFunctions.deleteTransaction(
+                    modelContext: modelContext,
+                    transaction: transaction,
+                    newCategoryKey: transaction.category?.categoryName ?? "")
+                handleCompletion(
+                    error: nil,
+                    successKey: "transaction_delete_success",
+                    message: $message,
+                    messageTitle: $messageTitle,
+                    showResultView: $showResultView,
+                    showToast: $showToast,
+                    dismiss: dismiss,
+                    onSuccess: {
+                        self.transactions.removeAll { $0.id == transaction.id }
+                    }
+                )
+            } catch {
+                handleCompletion(
+                    error: error,
+                    successKey: "transaction_delete_success",
+                    message: $message,
+                    messageTitle: $messageTitle,
+                    showResultView: $showResultView,
+                    showToast: $showToast,
+                    dismiss: dismiss,
+                    onSuccess: {}
+            )}
+                
+            
+           
         }
     }
     
@@ -128,5 +145,6 @@ struct Home: View {
 
 
 #Preview {
-    Home(selectedTab:.constant(0))
+    @Previewable @State var selectedTab = 0
+    Home(selectedTab: $selectedTab)
 }

@@ -70,7 +70,7 @@ struct OnboardingView: View {
 
 #Preview {
     
-    
-    OnboardingView(imageName: "categories_outcome", text: "Organisere und Bearbeite das Budget deiner Ausgaben mit Kategorien", selectedTab: .constant(4))
+    @Previewable @State var selectedTab = 4
+    OnboardingView(imageName: "categories_outcome", text: "Organisere und Bearbeite das Budget deiner Ausgaben mit Kategorien", selectedTab: $selectedTab)
     
 }

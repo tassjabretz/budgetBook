@@ -127,7 +127,7 @@ final class CategoryTests: XCTestCase {
             titel: "Make up",
             text: "Rosmann",
             amount: 30,
-            type: .outcome
+            type: .expense
         )
         context.insert(transaction)
         context.insert(testCategory)
@@ -172,7 +172,7 @@ final class CategoryTests: XCTestCase {
             titel: "negativ",
             text: "testnegativ",
             amount: 50,
-            type: .outcome
+            type: .expense
         )
         context.insert(transaction)
         context.insert(testCategory)
@@ -202,7 +202,7 @@ final class CategoryTests: XCTestCase {
             titel: "Make up",
             text: "Rosmann",
             amount: 50,
-            type: .outcome
+            type: .expense
         )
         
         
@@ -253,7 +253,7 @@ final class CategoryTests: XCTestCase {
             titel: "Make up",
             text: "Rosmann",
             amount: 50,
-            type: .outcome
+            type: .expense
         )
         
         
@@ -293,7 +293,7 @@ final class CategoryTests: XCTestCase {
             titel: "Make up",
             text: "Rosmann",
             amount: 50,
-            type: .outcome
+            type: .expense
         )
         
         
@@ -332,7 +332,7 @@ final class CategoryTests: XCTestCase {
             titel: "Make up",
             text: "Rosmann",
             amount: 50,
-            type: .outcome
+            type: .expense
         )
         
         
@@ -409,13 +409,13 @@ final class CategoryTests: XCTestCase {
             titel: "internet",
             text: "kosten",
             amount: 50.00,
-            type: .outcome
+            type: .expense
         )
         let transaction2 = Transaction(
             titel: "Gehalt",
             text: "Testfirma",
             amount: 30.00,
-            type: .outcome
+            type: .expense
         )
         
         
