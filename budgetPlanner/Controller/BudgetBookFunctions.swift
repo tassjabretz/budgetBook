@@ -1,15 +1,16 @@
-//
-//  CategoryFunctions.swift
-//  savingPot
-//
-//  Created by Tassja Bretz on 18.10.25.
-//
+
 
 import Foundation
 import SwiftData
 
 final class BudgetBookFunctions {
     
+    static let shared = BudgetBookFunctions()
+    private init() {}
+    
+    /**
+     This function return a array of all aviable Buget Books
+     */
     func fetchBudgetBooks(modelContext: ModelContext) -> [BudgetBook]  {
         
         
@@ -23,9 +24,16 @@ final class BudgetBookFunctions {
         return []
     }
     
+    static func fetchBudgetBooks(modelContext: ModelContext) -> [BudgetBook] {
+        shared.fetchBudgetBooks(modelContext: modelContext)
+    }
+    
+    /**
+     This function add the BudgetBook "Standard" to the Model BudgetBook
+     */
     func applyBudgetBook (modelContext: ModelContext)  {
-     
-        let budgetBook = BudgetBook(titel: "Standard")
+        
+        let budgetBook = BudgetBook(title:"Standard")
         
         modelContext.insert(budgetBook)
         
@@ -40,7 +48,8 @@ final class BudgetBookFunctions {
         
     }
     
-    
-   
+    static func applyBudgetBook(modelContext: ModelContext){
+        shared.applyBudgetBook(modelContext: modelContext) 
+    }
     
 }

@@ -4,7 +4,7 @@ struct OnboardingView: View {
     
     let imageName: String
     let text: String
- 
+    
     @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding: Bool = false
     @Binding var selectedTab: Int
     @Environment(\.dismiss) var dismiss
@@ -43,8 +43,8 @@ struct OnboardingView: View {
                 
                 if selectedTab == 4 && hasCompletedOnboarding == false{
                     
-              
-                        Button {
+                    
+                    Button {
                         hasCompletedOnboarding = true
                     }
                     
@@ -58,7 +58,7 @@ struct OnboardingView: View {
                     
                     Spacer()
                 }
-                    
+                
             }
             .padding()
             .foregroundStyle(.adaptiveBlack)
@@ -70,7 +70,7 @@ struct OnboardingView: View {
 
 #Preview {
     
-  
-   OnboardingView(imageName: "categories_outcome", text: "Organisere und Bearbeite das Budget deiner Ausgaben mit Kategorien", selectedTab: .constant(4))
-      
+    @Previewable @State var selectedTab = 4
+    OnboardingView(imageName: "categories_outcome", text: "Organisere und Bearbeite das Budget deiner Ausgaben mit Kategorien", selectedTab: $selectedTab)
+    
 }

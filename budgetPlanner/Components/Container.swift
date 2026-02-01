@@ -1,10 +1,3 @@
-//
-//  Container.swift
-//  budgetPlanner
-//
-//  Created by Tassja Bretz on 14.01.26.
-//
-
 import SwiftUI
 
 struct containerBorder: ViewModifier {
